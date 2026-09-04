@@ -1,0 +1,10 @@
+*_BACKUP_*
+*_backup_*
+*_SUPABASE_UNIVERSAL*
+*_TESTE*
+*_RECUPERADA*
+*_REMOTA*
+logs/
+*.py
+*.bat
+dados_ao_vivo.json

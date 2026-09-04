@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Timeline Operacional</title>
+<style>
+:root{--bg:#f4f6fb;--surface:#fff;--panel:#fff;--border:#e2e6f0;--text:#1a1f35;--muted:#7a82a0;
+      --mono:'DM Mono','Consolas','Courier New',monospace;--accent:#002060;}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'DM Sans','Segoe UI',Arial,sans-serif;}
+.hd{background:var(--accent);color:#fff;padding:14px 18px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+.hd h1{margin:0;font-size:1.15rem;font-weight:700;letter-spacing:.01em;}
+.hd h1 em{font-style:normal;opacity:.62;}
+.hd .sub{font-family:var(--mono);font-size:.62rem;color:rgba(255,255,255,.72);}
+
+/* ── filtros ─────────────────────────────────────────────── */
+.fbar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;padding:10px 18px;
+      background:var(--surface);border-bottom:1px solid var(--border);}
+.fg{display:flex;flex-direction:column;gap:3px;}
+.fg label{font-family:var(--mono);font-size:.54rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+.ms{position:relative;min-width:126px;}
+.ms-btn{width:100%;text-align:left;background:#fff;border:1px solid var(--border);border-radius:5px;
+        padding:5px 9px;font-size:.68rem;color:var(--text);cursor:pointer;font-family:inherit;}
+.ms-btn:after{content:'▾';float:right;opacity:.45;}
+.ms-menu{display:none;position:absolute;z-index:60;top:106%;left:0;min-width:100%;max-height:250px;overflow:auto;
+         background:#fff;border:1px solid var(--border);border-radius:5px;box-shadow:0 6px 22px rgba(0,0,0,.14);padding:4px;}
+.ms.open .ms-menu{display:block;}
+.ms-row{display:flex;align-items:center;gap:6px;padding:3px 6px;font-size:.68rem;white-space:nowrap;cursor:pointer;border-radius:3px;}
+.ms-row:hover{background:#eef1f9;}
+.ms-row.all{border-bottom:1px solid var(--border);margin-bottom:3px;font-weight:600;}
+.btn{background:var(--accent);color:#fff;border:0;border-radius:5px;padding:6px 13px;font-size:.68rem;cursor:pointer;font-family:inherit;}
+.btn.sec{background:#eceffa;color:var(--accent);}
+.chk{display:flex;align-items:center;gap:6px;font-size:.68rem;color:var(--text);cursor:pointer;padding-bottom:5px;}
+
+/* ── cartoes ─────────────────────────────────────────────── */
+.tl-cards{display:flex;flex-wrap:wrap;gap:8px;padding:10px 18px;background:var(--bg);border-bottom:1px solid var(--border);}
+.tl-card{border-radius:7px;padding:9px 13px;min-width:108px;flex:1 1 108px;max-width:170px;
+         box-shadow:0 1px 5px rgba(0,0,0,.12);position:relative;}
+.tl-cl{font-size:.54rem;font-family:var(--mono);font-weight:500;letter-spacing:.08em;
+       text-transform:uppercase;color:rgba(255,255,255,.72);margin-bottom:4px;}
+.tl-cv{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.5rem;color:#fff;line-height:1;}
+.tl-cv.tl-alert{color:#ffcdd2;}
+.tl-cu{font-size:.56rem;font-family:var(--mono);color:rgba(255,255,255,.58);margin-top:3px;}
+
+/* ── legenda ─────────────────────────────────────────────── */
+.tl-legend{display:flex;flex-wrap:wrap;gap:10px;padding:6px 18px 6px 168px;
+           background:var(--surface);border-bottom:1px solid var(--border);}
+.tl-leg{display:flex;align-items:center;gap:5px;font-size:.58rem;color:var(--muted);white-space:nowrap;}
+.tl-lbox{width:12px;height:12px;border-radius:2px;flex-shrink:0;}
+.tl-ltick{width:3px;height:14px;border-radius:1px;flex-shrink:0;}
+
+/* ── painel/grid ─────────────────────────────────────────── */
+.tl-outer{overflow:auto;padding:10px 18px 28px;min-height:560px;max-height:calc(100vh - 262px);}
+.tl-panel{display:grid;grid-template-columns:138px 1fr;grid-template-rows:1fr auto;
+          background:var(--panel);border:1px solid var(--border);border-radius:6px;
+          box-shadow:0 1px 6px rgba(0,0,0,.05);min-width:780px;min-height:520px;
+          width:max-content;max-width:100%;margin:0 auto;}
+.tl-col-labels{grid-column:1;grid-row:1;border-right:2px solid #dde1f0;display:flex;flex-direction:column;min-height:490px;}
+.tl-col-labels-ax{grid-column:1;grid-row:2;border-right:2px solid #dde1f0;border-top:1px solid var(--border);
+                  height:28px;background:var(--surface);border-radius:0 0 0 6px;}
+.tl-rlabel{height:var(--tl-row-h,38px);display:flex;align-items:center;justify-content:flex-end;
+           font-family:var(--mono);font-size:clamp(12px, calc(var(--tl-row-h,38px) * 0.24), 18px);font-weight:700;color:var(--text);
+           padding:0 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-bottom:1px solid #edf0f7;line-height:1;}
+.tl-rlabel:last-child{border-bottom:none;}
+.tl-col-canvas{grid-column:2;grid-row:1;position:relative;overflow:visible;min-height:490px;}
+.tl-crow{height:var(--tl-row-h,38px);position:relative;border-bottom:1px solid #edf0f7;}
+.tl-crow:last-child{border-bottom:none;}
+.tl-crow:hover{background:rgba(0,32,96,.014);}
+.tl-col-axis{grid-column:2;grid-row:2;position:relative;height:28px;border-top:1px solid var(--border);
+             background:var(--surface);border-radius:0 0 6px 0;}
+.tl-gline{position:absolute;width:1px;top:0;background:rgba(0,32,96,.06);pointer-events:none;z-index:0;}
+.tl-now{position:absolute;width:0;top:0;border-left:1.5px dashed #b71c1c;opacity:.5;pointer-events:none;z-index:1;}
+.tl-bar{position:absolute;height:calc(var(--tl-row-h,38px) - 12px);top:6px;border-radius:3px;display:flex;align-items:center;justify-content:center;
+        overflow:hidden;cursor:default;transition:filter .1s;z-index:2;}
+.tl-bar:hover{filter:brightness(1.16);z-index:20;}
+.tl-blbl{font-family:var(--mono);font-size:8px;font-weight:600;color:#fff;white-space:nowrap;padding:0 2px;}
+.tl-blbl.tl-dk{color:#444;}
+.tl-bbrd{position:absolute;border:2.5px solid red;border-radius:3px;pointer-events:none;z-index:3;height:calc(var(--tl-row-h,38px) - 10px);top:5px;}
+.tl-tick-mark{position:absolute;width:3.5px;height:calc(var(--tl-row-h,38px) - 4px);top:2px;border-radius:2px;z-index:10;pointer-events:none;}
+.tl-axlbl{position:absolute;font-family:var(--mono);font-size:.58rem;color:var(--muted);transform:translateX(-50%);top:5px;white-space:nowrap;}
+.tl-nodata{padding:60px;text-align:center;font-family:var(--mono);font-size:.7rem;color:var(--muted);letter-spacing:.08em;}
+#tlTT{position:fixed;background:#1a1f35;color:#f0f2f7;font-size:.7rem;line-height:1.55;padding:8px 12px;
+      border-radius:5px;pointer-events:none;z-index:9999;max-width:340px;display:none;box-shadow:0 4px 20px rgba(0,0,0,.3);}
+#tlTT b{font-family:var(--mono);font-size:.58rem;font-weight:500;letter-spacing:.05em;opacity:.65;display:block;margin-bottom:3px;}
+#tlTT .ttr{display:flex;gap:10px;justify-content:space-between;}
+#tlTT .ttk{opacity:.55;flex-shrink:0;}
+#tlTT .ttv{font-weight:600;text-align:right;}
+#tlTT .ttobs{margin-top:5px;padding-top:5px;border-top:1px solid rgba(255,255,255,.14);font-size:.64rem;
+             font-weight:400;opacity:.9;white-space:pre-wrap;max-height:120px;overflow:hidden;}
+#tlTT .ttwarn{margin-top:4px;color:#ff8080;font-size:.58rem;}
+.foot{padding:8px 18px 20px;font-family:var(--mono);font-size:.56rem;color:var(--muted);}
+
+/* ── modo TV / tela cheia ───────────────────────────────── */
+.tl-outer{position:relative;}
+.tl-tvbtn{position:sticky;top:0;left:100%;z-index:55;display:block;margin:0 0 8px auto;
+          background:var(--accent);color:#fff;border:0;border-radius:6px;padding:7px 12px;
+          font-size:.68rem;font-family:inherit;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.18);}
+.tl-tvbtn:hover{filter:brightness(1.12);}
+.tl-tvbtn .tv-icon{font-size:.9rem;margin-right:5px;}
+.tl-auto-badge{display:inline-flex;align-items:center;margin-left:5px;padding:1px 5px;border-radius:8px;
+               background:#e9eefb;color:var(--accent);font-size:.48rem;font-weight:700;letter-spacing:.05em;}
+.tl-outer:fullscreen{background:var(--bg);padding:12px 14px 18px;max-height:none;width:100vw;height:100vh;overflow:auto;}
+.tl-outer:fullscreen .tl-tvbtn{position:sticky;top:0;right:0;}
+.tl-outer:fullscreen .tl-panel{
+  min-height:calc(100vh - 62px);
+  width:100%;
+  max-width:none;
+  min-width:0;
+  margin:0;
+  grid-template-columns:220px minmax(0,1fr);
+}
+.tl-outer:fullscreen .tl-col-labels,.tl-outer:fullscreen .tl-col-canvas{min-height:0;}
+.tl-outer:fullscreen .tl-rlabel{font-size:clamp(20px, calc(var(--tl-row-h,38px) * 0.50), 34px);font-weight:850;padding-right:18px;letter-spacing:.015em;line-height:.95;}
+.tl-outer:fullscreen .tl-bar.tl-alertbar .tl-blbl{font-size:clamp(11px, calc(var(--tl-row-h,38px) * 0.24), 16px);font-weight:700;padding:0 4px;line-height:1;}
+</style>
+  <script src="supabase_config.js"></script>
+</head>
+<body>
+<div class="hd">
+  <h1>Timeline de <em>Atividades</em></h1>
+  <span class="sub" id="tlSub"></span>
+</div>
+
+<div class="fbar">
+  <div class="fg"><label>Período <span class="tl-auto-badge">AUTO</span></label><div class="ms" id="tlPerms"></div></div>
+  <div class="fg"><label>Tipo Equipe</label><div class="ms" id="tlTipoms"></div></div>
+  <div class="fg"><label>Base</label><div class="ms" id="tlBasems"></div></div>
+  <div class="fg"><label>Equipe</label><div class="ms" id="tlEqms"></div></div>
+  <div class="fg"><label>Atividade</label><div class="ms" id="tlAtivms"></div></div>
+  <label class="chk"><input type="checkbox" id="tlTR" checked> Em andamento (tempo real)</label>
+  <label class="chk"><input type="checkbox" id="tlSoAlerta"> Só equipes com alerta</label>
+  <button class="btn sec" id="tlReset">Redefinir</button>
+</div>
+
+<div class="tl-cards" id="tlCards"></div>
+<div class="tl-legend" id="tlLegend"></div>
+
+<div class="tl-outer" id="tlOuter">
+  <button class="tl-tvbtn" id="tlTVBtn" type="button" title="Maximizar gráfico na TV"><span class="tv-icon">⛶</span><span id="tlTVBtnTxt">Tela inteira</span></button>
+  <div class="tl-panel" id="tlPanel">
+    <div class="tl-col-labels" id="tlLabels"></div>
+    <div class="tl-col-canvas" id="tlCanvas"></div>
+    <div class="tl-col-labels-ax"></div>
+    <div class="tl-col-axis" id="tlAxis"></div>
+  </div>
+</div>
+<div id="tlTT"></div>
+<div class="foot" id="tlFoot">Carregando dados operacionais...</div>
+
+<script>
+let TL_DATA = [];
+let TL_BASE_MS = Date.now();
+let TL_LIM = {"Plataforma":[null,25],"Deslocamento":[9,25],"Reparo":[9,60],"Reparo Improdutivo":[9,60],"Intervalo":[null,10],"Retorno a Base":[null,40]};
+let TL_GAP_MAX = 300;
+let TL_META = null;
+let TL_INITIALIZED = false;
+let TL_PERIODO_AUTO_CHAVE = '';
+let TL_WAKE_LOCK = null;
+
+function tlM2D(m){return m==null?null:new Date(TL_BASE_MS+m*60000);}
+function tlFmt(m){const d=tlM2D(m);return d?d.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function tlAtualizarRodape(meta){
+  const foot=document.getElementById('tlFoot');
+  if(!foot)return;
+  if(!meta){foot.textContent='Dados operacionais indisponíveis.';return;}
+
+  const dtSup=meta.supabaseAtualizadoEm?new Date(meta.supabaseAtualizadoEm):null;
+  const atualizado=dtSup&&!Number.isNaN(dtSup.getTime())?dtSup.toLocaleString('pt-BR'):'—';
+
+  const dtGer=meta.generatedAt?new Date(meta.generatedAt):null;
+  const gerado=dtGer&&!Number.isNaN(dtGer.getTime())?dtGer.toLocaleString('pt-BR'):'—';
+
+  const src=meta.sources||{};
+  const st=meta.stats||{};
+
+  foot.textContent='Supabase atualizado em '+atualizado+
+    ' · Gerado em '+gerado+
+    ' · Origem: '+(meta.supabaseOrigem||'—')+
+    ' · Painel: '+(src.painel||'—')+
+    ' · Deslocamentos: '+(src.deslocamentos||'—')+
+    ' · Resultado E-Order: '+(src.resultado||'—')+
+    ' · OS com resultado: '+(st.osComResultado??'—')+
+    ' · Improdutivos: '+(st.reparosImprodutivos??'—');
+}
+
+const AO_VIVO_SUPABASE_URL=window.SUPABASE_CONFIG?.url||'';
+const AO_VIVO_SUPABASE_KEY=window.SUPABASE_CONFIG?.publishableKey||'';
+if(!AO_VIVO_SUPABASE_URL||!AO_VIVO_SUPABASE_KEY){
+  console.error('Configuração do Supabase não encontrada. Verifique supabase_config.js');
+}
+let AO_VIVO_CARGA_ID='';
+
+async function tlCarregarDados(){
+  const url=AO_VIVO_SUPABASE_URL+
+    '/rest/v1/ao_vivo_operacional?select=carga_id,origem,dados,atualizado_em&id=eq.atual&limit=1';
+
+  const resp=await fetch(url,{
+    cache:'no-store',
+    headers:{
+      'apikey':AO_VIVO_SUPABASE_KEY,}
+  });
+
+  if(!resp.ok)throw new Error('HTTP '+resp.status+' ao carregar Ao Vivo do Supabase');
+
+  const rows=await resp.json();
+  if(!Array.isArray(rows)||!rows.length)throw new Error('Supabase ainda sem carga ativa do Ao Vivo.');
+
+  const reg=rows[0];
+  const payload=reg?.dados;
+
+  if(!payload||!Array.isArray(payload.records))
+    throw new Error('Payload Supabase inválido: campo records não encontrado.');
+
+  AO_VIVO_CARGA_ID=String(reg.carga_id||reg.atualizado_em||'');
+  TL_META={
+    ...payload,
+    supabaseAtualizadoEm:reg.atualizado_em||null,
+    supabaseOrigem:reg.origem||null,
+    supabaseCargaId:AO_VIVO_CARGA_ID
+  };
+
+  TL_DATA=payload.records;
+
+  if(payload.baseDate){
+    const d=new Date(payload.baseDate+'T00:00:00');
+    if(!Number.isNaN(d.getTime()))TL_BASE_MS=d.getTime();
+  }
+
+  if(payload.limits&&typeof payload.limits==='object')TL_LIM=payload.limits;
+  if(Number.isFinite(Number(payload.gapMax)))TL_GAP_MAX=Number(payload.gapMax);
+
+  tlAtualizarRodape(TL_META);
+  return TL_META;
+}
+
+const TL_COLOR={'Plataforma':'#000000','Deslocamento':'#4E79A7','Reparo':'#59A14F',
+  'Reparo Improdutivo':'#E15759','Intervalo':'#8F8F8F','Retorno a Base':'#111111'};
+const TL_COLOR_TR={'Plataforma':'#4d4d4d','Deslocamento':'#8FB6E0','Reparo':'#8DCD86',
+  'Reparo Improdutivo':'#F09A9B','Intervalo':'#CFCFCF','Retorno a Base':'#555555'};
+const TL_ATIVS=['Plataforma','Deslocamento','Reparo','Reparo Improdutivo','Intervalo','Retorno a Base'];
+const TL_DARK=new Set(['Intervalo']);
+const TL_CARDS=[
+  {key:'avgP',lbl:'Plataforma',   unit:'min',color:'#000000',hi:25},
+  {key:'avgD',lbl:'Deslocamento', unit:'min',color:'#4E79A7',hi:25,lo:9},
+  {key:'avgR',lbl:'Reparo',       unit:'min',color:'#59A14F',hi:60,lo:9},
+  {key:'avgI',lbl:'Intervalo',    unit:'min',color:'#8F8F8F',hi:10},
+  {key:'avgRet',lbl:'Retorno Base',unit:'min',color:'#333333',hi:40},
+  {key:'nOS',lbl:'OS no dia',     unit:'OS', color:'#2E7D32',dia:true},
+  {key:'alrt',lbl:'Alertas 🔴',   unit:'',   color:'#B71C1C',dia:true},
+];
+
+/* ── multiselect ─────────────────────────────────────────── */
+function msSet(id,items,selected,onChange){
+  const root=document.getElementById(id);if(!root)return;
+  const sel=new Set(selected==null?items:selected);
+  root.innerHTML='<button type="button" class="ms-btn"></button><div class="ms-menu"></div>';
+  const btn=root.querySelector('.ms-btn'),menu=root.querySelector('.ms-menu');
+  menu.innerHTML=['<label class="ms-row all"><input type="checkbox" class="ms-all"> Selecionar todos</label>']
+    .concat(items.map(v=>`<label class="ms-row"><input type="checkbox" class="ms-opt" value="${esc(v)}" ${sel.has(v)?'checked':''}> ${esc(v)}</label>`)).join('');
+  const all=menu.querySelector('.ms-all');
+  function upd(){const v=msGet(id);btn.textContent=v.length===items.length?'Todas':(v.length===0?'Nenhuma':v.length+' selecionadas');}
+  function sync(){const o=[...menu.querySelectorAll('.ms-opt')];all.checked=o.length>0&&o.every(x=>x.checked);
+    all.indeterminate=o.some(x=>x.checked)&&!all.checked;upd();}
+  btn.addEventListener('click',e=>{e.stopPropagation();document.querySelectorAll('.ms.open').forEach(x=>{if(x!==root)x.classList.remove('open');});root.classList.toggle('open');});
+  menu.addEventListener('click',e=>e.stopPropagation());
+  all.addEventListener('click',()=>{const o=[...menu.querySelectorAll('.ms-opt')];const on=o.length>0&&o.every(x=>x.checked);
+    o.forEach(x=>x.checked=!on);root.dataset.cleared=on?'1':'0';sync();if(onChange)onChange();});
+  menu.querySelectorAll('.ms-opt').forEach(o=>o.addEventListener('change',()=>{root.dataset.cleared='0';sync();if(onChange)onChange();}));
+  root.dataset.init='1';sync();
+}
+function msGet(id){const r=document.getElementById(id);return r?[...r.querySelectorAll('.ms-opt:checked')].map(o=>o.value):[];}
+document.addEventListener('click',()=>document.querySelectorAll('.ms.open').forEach(x=>x.classList.remove('open')));
+
+
+/* ── estado / período automático / modo TV ───────────────── */
+function tlNorm(v){
+  return String(v==null?'':v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase();
+}
+function tlFaixaPeriodoAgora(d=new Date()){
+  const h=d.getHours();
+  if(h>=6 && h<13)return ['manha'];
+  if(h>=13 && h<17)return ['manha','tarde'];
+  if(h>=17 && h<21)return ['tarde'];
+  if(h>=21 || h<1)return ['tarde','noite'];
+  return ['noite'];
+}
+function tlSelecionarValoresMs(id,valoresNorm){
+  const root=document.getElementById(id);if(!root)return false;
+  const wanted=new Set(valoresNorm.map(tlNorm));
+  let mudou=false;
+  root.querySelectorAll('.ms-opt').forEach(o=>{
+    const n=tlNorm(o.value);
+    const deve=[...wanted].some(w=>n===w||n.includes(w));
+    if(o.checked!==deve){o.checked=deve;mudou=true;}
+  });
+  const all=root.querySelector('.ms-all');
+  const opts=[...root.querySelectorAll('.ms-opt')];
+  if(all){all.checked=opts.length>0&&opts.every(x=>x.checked);all.indeterminate=opts.some(x=>x.checked)&&!all.checked;}
+  const btn=root.querySelector('.ms-btn');
+  if(btn){const v=msGet(id);btn.textContent=v.length===opts.length?'Todas':(v.length===0?'Nenhuma':v.length+' selecionadas');}
+  return mudou;
+}
+function tlAplicarPeriodoAutomatico(forcar=false){
+  const faixa=tlFaixaPeriodoAgora();
+  const chave=faixa.join('|');
+  if(!forcar && chave===TL_PERIODO_AUTO_CHAVE)return false;
+  TL_PERIODO_AUTO_CHAVE=chave;
+  const mudou=tlSelecionarValoresMs('tlPerms',faixa);
+  if(mudou || forcar){tlRebuildEq();tlApply();}
+  return mudou;
+}
+function tlSnapshotFiltros(){
+  if(!TL_INITIALIZED)return null;
+  return {
+    tipo:msGet('tlTipoms'),base:msGet('tlBasems'),equipe:msGet('tlEqms'),atividade:msGet('tlAtivms'),
+    tr:!!document.getElementById('tlTR')?.checked,alerta:!!document.getElementById('tlSoAlerta')?.checked
+  };
+}
+function tlIntersecaoDisponivel(valores,disponiveis){
+  const set=new Set(disponiveis);return (valores||[]).filter(v=>set.has(v));
+}
+async function tlWakeLock(on){
+  try{
+    if(on && 'wakeLock' in navigator){
+      if(!TL_WAKE_LOCK)TL_WAKE_LOCK=await navigator.wakeLock.request('screen');
+    }else if(!on && TL_WAKE_LOCK){
+      await TL_WAKE_LOCK.release();TL_WAKE_LOCK=null;
+    }
+  }catch(err){TL_WAKE_LOCK=null;console.warn('Wake Lock indisponível:',err);}
+}
+async function tlToggleTV(){
+  const alvo=document.getElementById('tlOuter');if(!alvo)return;
+  try{
+    if(document.fullscreenElement)await document.exitFullscreen();
+    else await alvo.requestFullscreen();
+  }catch(err){console.warn('Modo tela inteira indisponível:',err);}
+}
+function tlAtualizarBotaoTV(){
+  tlWakeLock(!!document.fullscreenElement);
+  const txt=document.getElementById('tlTVBtnTxt');if(txt)txt.textContent=document.fullscreenElement?'Sair da tela inteira':'Tela inteira';
+  if(TL_DATA.length)setTimeout(()=>tlDraw(tlFiltrados()),60);
+}
+
+/* ── regras de negocio das barras ────────────────────────── */
+function tlAlerta(tp,dur,aberta){
+  const l=TL_LIM[tp];if(!l)return false;
+  const lo=l[0],hi=l[1];
+  if(hi!=null&&dur>hi)return true;
+  if(!aberta&&lo!=null&&dur<lo)return true;   // limite inferior nao vale p/ etapa em curso
+  return false;
+}
+function tlBars(r,usarTR){
+  const bs=[];
+  const os=[...r.os].sort((a,b)=>(a[0]==null?1e9:a[0])-(b[0]==null?1e9:b[0]));
+  // Etapa em curso termina no "agora"; se a equipe ja deu log off, termina no log off.
+  const fimAberto=(r.lo!=null)?r.lo:r.ag;
+  const push=(tp,i,f,aberta,extra)=>{
+    if(i==null||f==null||f<=i)return;
+    if(aberta&&!usarTR)return;
+    const dur=Math.round((f-i)*10)/10;
+    bs.push(Object.assign({tp:tp,i:i,f:f,dur:dur,tr:aberta?1:0,bd:tlAlerta(tp,dur,aberta)},extra||{}));
+  };
+  const acs=os.map(o=>o[0]).filter(v=>v!=null);
+  const firstAC=acs.length?Math.min.apply(null,acs):null;
+
+  // Plataforma: inicio do calendario -> 1o deslocamento do dia
+  if(r.ic!=null){
+    if(firstAC!=null){push('Plataforma',r.ic,firstAC,false);}
+    else{push('Plataforma',r.ic,fimAberto,true);}   // logou e ainda nao recebeu OS
+  }
+  for(let x=0;x<os.length;x++){
+    const ac=os[x][0],nl=os[x][1],lib=os[x][2],nr=os[x][3],res=os[x][4],obs=os[x][5],imp=os[x][6],cod=os[x][7];
+    const ex={nr:nr,res:res,obs:obs,cod:cod};
+    if(ac!=null){
+      if(nl!=null){push('Deslocamento',ac,nl,false,ex);}
+      else{push('Deslocamento',ac,fimAberto,true,ex);}
+    }
+    if(nl!=null){
+      const tp=imp?'Reparo Improdutivo':'Reparo';
+      if(lib!=null){push(tp,nl,lib,false,ex);}
+      else{push(tp,nl,fimAberto,true,ex);}
+    }
+    // Intervalo entre incidencias: liberacao -> proximo "A Caminho"
+    if(x<os.length-1){
+      const nAC=os[x+1][0];
+      if(lib!=null&&nAC!=null&&nAC>lib&&(nAC-lib)<TL_GAP_MAX){push('Intervalo',lib,nAC,false);}
+    }
+  }
+  // Fecho do dia, a partir da ultima liberacao:
+  //  - com log off  -> Retorno a Base
+  //  - sem log off  -> Intervalo em curso (liberou e ainda nao deu "A Caminho" na proxima)
+  const ult=os.length?os[os.length-1]:null;
+  if(ult&&ult[2]!=null){
+    if(r.lo!=null){push('Retorno a Base',ult[2],r.lo,false);}
+    else{push('Intervalo',ult[2],r.ag,true);}
+  }
+  return bs.sort((a,b)=>a.i-b.i);
+}
+
+/* ── filtros ─────────────────────────────────────────────── */
+function tlTipo(r){
+  const s=String(r.eq||'').trim().toUpperCase();
+  const c=s.length>=7?s.charAt(6):'';
+  if(c==='X')return 'Extra';
+  if(c==='O')return 'Operação';
+  return null;
+}
+function tlPref(r){return String(r.eq||'').slice(0,2);}
+function tlEquipeAtivaNaLista(r){
+  if(r.lo==null)return true;
+  const agora=Number(r.ag),logoff=Number(r.lo);
+  if(!Number.isFinite(agora)||!Number.isFinite(logoff))return true;
+  return (agora-logoff)<=60;
+}
+function tlFiltrados(){
+  const vP=msGet('tlPerms'),vT=msGet('tlTipoms'),vB=msGet('tlBasems'),vE=msGet('tlEqms'),vA=msGet('tlAtivms');
+  const tr=document.getElementById('tlTR').checked;
+  const soAl=document.getElementById('tlSoAlerta').checked;
+  const todas=vA.length===TL_ATIVS.length;
+  return TL_DATA
+    .filter(r=>tlEquipeAtivaNaLista(r)&&vP.includes(r.per||'')&&vT.includes(tlTipo(r))&&vB.includes(tlPref(r))&&vE.includes(r.eq))
+    .map(r=>{const b=tlBars(r,tr);return Object.assign({},r,{bars:todas?b:b.filter(x=>vA.includes(x.tp)),allBars:tlBars(r,tr)});})
+    .filter(r=>soAl?r.allBars.some(b=>b.bd):true);
+}
+function tlBaseFiltrada(){
+  const vP=msGet('tlPerms'),vT=msGet('tlTipoms'),vB=msGet('tlBasems');
+  return TL_DATA.filter(r=>tlEquipeAtivaNaLista(r)&&vP.includes(r.per||'')&&vT.includes(tlTipo(r))&&vB.includes(tlPref(r)));
+}
+function tlRebuildEq(){
+  const eqs=[...new Set(tlBaseFiltrada().map(r=>r.eq))].sort();
+  const root=document.getElementById('tlEqms');
+  const prev=msGet('tlEqms').filter(e=>eqs.includes(e));
+  const sel=(root.dataset.init==='1')?(root.dataset.cleared==='1'?[]:(prev.length?prev:eqs)):eqs;
+  msSet('tlEqms',eqs,sel,tlApply);
+}
+function tlApply(){
+  const recs=tlFiltrados();
+  tlCards(recs);tlDraw(recs);
+  const dts=[...new Set(TL_DATA.map(r=>r.dtd))];
+  const ag=TL_DATA.length?tlFmt(TL_DATA[0].ag):'';
+  document.getElementById('tlSub').textContent='Produtividade · Painel + Deslocamentos + Resultado · '+dts.join(', ')+' · posição às '+ag+' · '+recs.length+' equipes';
+}
+function tlOnFiltroTopo(){tlRebuildEq();tlApply();}
+
+/* ── cartoes ─────────────────────────────────────────────── */
+function tlCards(recs){
+  const acc={};TL_ATIVS.forEach(t=>acc[t]=[0,0]);
+  let sOS=0,sAl=0;
+  recs.forEach(r=>{
+    const bars=r.allBars;
+    TL_ATIVS.forEach(t=>{const g=bars.filter(b=>b.tp===t||(t==='Reparo'&&b.tp==='Reparo Improdutivo'));
+      if(g.length){acc[t][0]+=g.reduce((s,b)=>s+b.dur,0)/g.length;acc[t][1]++;}});
+    sOS+=r.os.length;sAl+=bars.filter(b=>b.bd).length;
+  });
+  const n=recs.length||1;
+  const md=(t)=>acc[t][1]?Math.round(acc[t][0]/acc[t][1]*10)/10:null;
+  const vals={avgP:md('Plataforma'),avgD:md('Deslocamento'),avgR:md('Reparo'),avgI:md('Intervalo'),
+              avgRet:md('Retorno a Base'),nOS:Math.round(sOS/n*10)/10,alrt:Math.round(sAl/n*10)/10};
+  const el=document.getElementById('tlCards');el.innerHTML='';
+  TL_CARDS.forEach(d=>{
+    const v=vals[d.key];
+    const al=v!=null&&((d.hi!=null&&v>d.hi)||(d.lo!=null&&v<d.lo));
+    const c=document.createElement('div');c.className='tl-card';c.style.background=d.color;
+    const disp=v!=null?(Number.isInteger(v)?v:v.toFixed(1)):'—';
+    c.innerHTML='<div class="tl-cl">'+d.lbl+'</div><div class="tl-cv'+(al?' tl-alert':'')+'">'+disp+'</div>'+
+                '<div class="tl-cu">'+d.unit+' · média por equipe · '+recs.length+' eq</div>';
+    el.appendChild(c);
+  });
+}
+function tlLegenda(){
+  const el=document.getElementById('tlLegend');
+  el.innerHTML=TL_ATIVS.map(t=>'<span class="tl-leg"><span class="tl-lbox" style="background:'+TL_COLOR[t]+'"></span>'+t+'</span>').join('')
+    +'<span class="tl-leg"><span class="tl-lbox" style="background:'+TL_COLOR_TR['Deslocamento']+'"></span>tom claro = em andamento</span>'
+    +'<span class="tl-leg"><span class="tl-lbox" style="background:#fff;border:2px solid red"></span>fora do limite</span>'
+    +'<span class="tl-leg"><span class="tl-ltick" style="background:#0000FF"></span>início calendário</span>'
+    +'<span class="tl-leg"><span class="tl-ltick" style="background:#FF0000"></span>fim calendário</span>'
+    +'<span class="tl-leg"><span class="tl-ltick" style="background:#b71c1c;opacity:.5"></span>agora</span>';
+}
+
+/* ── desenho ─────────────────────────────────────────────── */
+function tlDraw(recs){
+  const labEl=document.getElementById('tlLabels'),canEl=document.getElementById('tlCanvas'),axEl=document.getElementById('tlAxis');
+  labEl.innerHTML='';canEl.innerHTML='';axEl.innerHTML='';
+  if(!recs.length){canEl.innerHTML='<div class="tl-nodata">Nenhuma equipe para os filtros selecionados.</div>';return;}
+  const dayBase=(r)=>{
+    const c=[r.ic,r.fc,r.lo].concat((r.bars||[]).flatMap(b=>[b.i,b.f])).filter(v=>v!=null);
+    return c.length?Math.floor(Math.min.apply(null,c)/1440)*1440:0;
+  };
+  const loc=(m,r)=>m==null?null:m-dayBase(r);
+  let tMin=Infinity,tMax=-Infinity;
+  recs.forEach(r=>{
+    [r.ic,r.fc].concat(r.bars.map(b=>b.i)).forEach(m=>{const v=loc(m,r);if(v!=null){tMin=Math.min(tMin,v);tMax=Math.max(tMax,v);}});
+    r.bars.forEach(b=>{const v=loc(b.f,r);if(v!=null)tMax=Math.max(tMax,v);});
+  });
+  if(!isFinite(tMin))return;
+  tMin=Math.floor(tMin/60)*60;tMax=Math.ceil(tMax/60)*60;
+  if(tMax<=tMin)tMax=tMin+60;
+  const totM=tMax-tMin;
+  const outerEl=document.querySelector('.tl-outer');
+  const outerW=Math.max(820,(outerEl&&outerEl.clientWidth)||window.innerWidth||1100);
+  const emTelaCheia=!!document.fullscreenElement;
+  const labelW=emTelaCheia?220:138;
+  const lateralExtra=emTelaCheia?8:56;
+  const usableW=Math.max(560,outerW-(labelW+lateralExtra));
+  let cW,PPM;
+  if(emTelaCheia){
+    cW=Math.round(usableW);
+    PPM=cW/totM;
+  }else{
+    const eqCap=recs.length<=2?860:(recs.length<=4?1080:1360);
+    const fillFactor=recs.length<=2?0.62:(recs.length<=4?0.76:0.9);
+    const maxCanvasW=Math.max(640,Math.min(eqCap,Math.round(usableW*0.98)));
+    const minCanvasW=Math.min(maxCanvasW,Math.max(520,Math.round(usableW*0.40)));
+    const targetFillW=Math.round(Math.min(maxCanvasW,Math.max(minCanvasW,usableW*fillFactor)));
+    const ppmSuggested=targetFillW/totM;
+    PPM=Math.min(2.2,Math.max(0.95,ppmSuggested));
+    cW=Math.round(Math.min(maxCanvasW,Math.max(minCanvasW,totM*PPM)));
+  }
+
+  // Altura dinâmica no modo TV: distribui as equipes pela área vertical disponível.
+  // O limite máximo evita barras exageradamente altas quando há poucas equipes.
+  const outerH=(outerEl&&outerEl.clientHeight)||window.innerHeight||560;
+  const targetBodyH=document.fullscreenElement?Math.max(490,outerH-58):Math.max(490,recs.length*38);
+  const rowH=Math.max(38,Math.min(66,Math.floor(targetBodyH/Math.max(recs.length,1))));
+  const bodyH=Math.max(490,recs.length*rowH);
+  const panelEl=document.getElementById('tlPanel');
+  if(panelEl)panelEl.style.setProperty('--tl-row-h',rowH+'px');
+  canEl.style.width=cW+'px';axEl.style.width=cW+'px';
+  canEl.style.minHeight=bodyH+'px';labEl.style.minHeight=bodyH+'px';
+  const px=(m,r)=>{const v=loc(m,r);return v==null?null:Math.round((v-tMin)*PPM);};
+  const fmtLocal=(m)=>{const mm=((Math.round(m)%1440)+1440)%1440;
+    return String(Math.floor(mm/60)).padStart(2,'0')+':'+String(mm%60).padStart(2,'0');};
+  for(let m=tMin;m<=tMax;m+=60){
+    const x=Math.round((m-tMin)*PPM);
+    const g=document.createElement('div');g.className='tl-gline';g.style.left=x+'px';g.style.height=bodyH+'px';canEl.appendChild(g);
+    const l=document.createElement('div');l.className='tl-axlbl';l.style.left=x+'px';l.textContent=fmtLocal(m);axEl.appendChild(l);
+  }
+  const ag=recs[0].ag,agX=px(ag,recs[0]);
+  if(agX!=null&&agX>=0&&agX<=cW){const nw=document.createElement('div');nw.className='tl-now';nw.style.left=agX+'px';nw.style.height=bodyH+'px';canEl.appendChild(nw);}
+  recs.forEach(r=>{
+    const lb=document.createElement('div');lb.className='tl-rlabel';lb.textContent=r.eq;
+    lb.title=r.eq+' · '+r.dtd+' · '+(r.per||'')+' · '+(r.tipo||'');
+    labEl.appendChild(lb);
+    const row=document.createElement('div');row.className='tl-crow';
+    r.bars.forEach(b=>{
+      const x1=px(b.i,r),x2=px(b.f,r);if(x1==null||x2==null)return;
+      const w=Math.max(x2-x1,1);
+      const bar=document.createElement('div');bar.className='tl-bar'+(b.bd?' tl-alertbar':'');
+      bar.style.left=x1+'px';bar.style.width=w+'px';
+      bar.style.background=(b.tr?TL_COLOR_TR:TL_COLOR)[b.tp]||'#999';
+      if(b.tp==='Retorno a Base')bar.style.opacity='0.78';
+      if(w>16&&b.dur>=8){const t=document.createElement('div');
+        t.className='tl-blbl'+((TL_DARK.has(b.tp)||b.tr&&b.tp==='Intervalo')?' tl-dk':'');
+        t.textContent=Math.round(b.dur);bar.appendChild(t);}
+      bar.addEventListener('mouseenter',e=>{
+        const TT=document.getElementById('tlTT');
+        TT.innerHTML='<b>'+b.tp+(b.tr?' · em andamento':'')+'</b>'
+          +'<div class="ttr"><span class="ttk">Equipe</span><span class="ttv">'+esc(r.eq)+'</span></div>'
+          +'<div class="ttr"><span class="ttk">Data</span><span class="ttv">'+r.dtd+'</span></div>'
+          +(b.nr?'<div class="ttr"><span class="ttk">OS</span><span class="ttv">'+esc(b.nr)+'</span></div>':'')
+          +'<div class="ttr"><span class="ttk">Início</span><span class="ttv">'+tlFmt(b.i)+'</span></div>'
+          +'<div class="ttr"><span class="ttk">Fim</span><span class="ttv">'+(b.tr?'—':tlFmt(b.f))+'</span></div>'
+          +'<div class="ttr"><span class="ttk">Tempo</span><span class="ttv">'+Math.round(b.dur)+' min</span></div>'
+          +(b.res?'<div class="ttr"><span class="ttk">Resultado</span><span class="ttv" style="max-width:190px;white-space:normal">'+esc(b.res)+'</span></div>':'')
+          +(b.cod?'<div class="ttr"><span class="ttk">Código resultado</span><span class="ttv">'+esc(b.cod)+'</span></div>':'')
+          +(b.tp==='Reparo Improdutivo'?'<div class="ttwarn">● Reparo improdutivo — resultado diferente de REA</div>':'')
+          +(b.obs?'<div class="ttobs"><strong>Observação</strong><br>'+esc(b.obs)+'</div>':'')
+          +(b.bd?'<div class="ttwarn">⚠ Fora do limite</div>':'');
+        TT.style.display='block';tlMoveTT(e);
+      });
+      bar.addEventListener('mousemove',tlMoveTT);
+      bar.addEventListener('mouseleave',()=>document.getElementById('tlTT').style.display='none');
+      row.appendChild(bar);
+      if(b.bd){const brd=document.createElement('div');brd.className='tl-bbrd';brd.style.left=x1+'px';brd.style.width=w+'px';row.appendChild(brd);}
+    });
+    [[r.ic,'#0000FF'],[r.fc,'#FF0000']].forEach(([m,c])=>{
+      if(m==null)return;const x=px(m,r);if(x==null)return;
+      const tk=document.createElement('div');tk.className='tl-tick-mark';tk.style.left=x+'px';tk.style.background=c;row.appendChild(tk);
+    });
+    canEl.appendChild(row);
+  });
+}
+function tlMoveTT(e){
+  const TT=document.getElementById('tlTT');
+  let x=e.clientX+14,y=e.clientY-10;
+  const w=TT.offsetWidth||280,h=TT.offsetHeight||190;
+  if(x+w+8>window.innerWidth)x=e.clientX-w-10;
+  if(y+h+8>window.innerHeight)y=Math.max(6,window.innerHeight-h-8);
+  TT.style.left=x+'px';TT.style.top=y+'px';
+}
+
+/* ── init / atualização dinâmica ─────────────────────────── */
+function tlInit(preservar=true){
+  const snap=preservar?tlSnapshotFiltros():null;
+  const pers=[...new Set(TL_DATA.map(r=>r.per||''))].filter(Boolean).sort();
+  const tipos=[...new Set(TL_DATA.map(tlTipo))].filter(Boolean).sort();
+  const prefs=[...new Set(TL_DATA.map(tlPref))].filter(Boolean).sort();
+
+  msSet('tlPerms',pers,pers,()=>tlAplicarPeriodoAutomatico(true));
+  const selTipos=snap?tlIntersecaoDisponivel(snap.tipo,tipos):tipos;
+  const selBases=snap?tlIntersecaoDisponivel(snap.base,prefs):prefs;
+  const selAtiv=snap?tlIntersecaoDisponivel(snap.atividade,TL_ATIVS):TL_ATIVS;
+  msSet('tlTipoms',tipos,(snap&&snap.tipo.length===0)?[]:(selTipos.length?selTipos:tipos),tlOnFiltroTopo);
+  msSet('tlBasems',prefs,(snap&&snap.base.length===0)?[]:(selBases.length?selBases:prefs),tlOnFiltroTopo);
+  msSet('tlAtivms',TL_ATIVS,(snap&&snap.atividade.length===0)?[]:(selAtiv.length?selAtiv:TL_ATIVS),tlApply);
+
+  if(!TL_INITIALIZED){
+    document.getElementById('tlTR').addEventListener('change',tlApply);
+    document.getElementById('tlSoAlerta').addEventListener('change',tlApply);
+    document.getElementById('tlTVBtn').addEventListener('click',tlToggleTV);
+    document.addEventListener('fullscreenchange',tlAtualizarBotaoTV);
+    document.getElementById('tlReset').addEventListener('click',()=>{
+      const t=[...new Set(TL_DATA.map(tlTipo))].filter(Boolean).sort();
+      const b=[...new Set(TL_DATA.map(tlPref))].filter(Boolean).sort();
+      const r=document.getElementById('tlEqms');if(r)r.dataset.cleared='0';
+      msSet('tlTipoms',t,t,tlOnFiltroTopo);msSet('tlBasems',b,b,tlOnFiltroTopo);
+      msSet('tlAtivms',TL_ATIVS,TL_ATIVS,tlApply);
+      document.getElementById('tlTR').checked=true;document.getElementById('tlSoAlerta').checked=false;
+      TL_PERIODO_AUTO_CHAVE='';
+      tlRebuildEq();tlAplicarPeriodoAutomatico(true);
+    });
+    TL_INITIALIZED=true;
+  }else if(snap){
+    document.getElementById('tlTR').checked=snap.tr;
+    document.getElementById('tlSoAlerta').checked=snap.alerta;
+  }
+
+  tlLegenda();
+  tlRebuildEq();
+
+  // Regra operacional: o filtro Equipe sempre inicia/reinicia com
+  // "Selecionar todos" ativo. Assim, cada nova carga do Ao Vivo
+  // volta a exibir todas as equipes disponíveis no filtro corrente.
+  const eqDisponiveis=[...document.querySelectorAll('#tlEqms .ms-opt')].map(o=>o.value);
+  const eqRoot=document.getElementById('tlEqms');
+  if(eqRoot)eqRoot.dataset.cleared='0';
+  tlSelecionarValoresMs('tlEqms',eqDisponiveis);
+
+  TL_PERIODO_AUTO_CHAVE='';
+  tlAplicarPeriodoAutomatico(true);
+}
+async function tlBootstrap(){
+  try{
+    await tlCarregarDados();
+    tlInit(false);
+  }catch(err){
+    console.error('Falha ao carregar Ao Vivo:',err);
+    document.getElementById('tlCanvas').innerHTML='<div class="tl-nodata">Não foi possível carregar dados_ao_vivo.json.<br><br>'+esc(err.message)+'</div>';
+    document.getElementById('tlSub').textContent='Falha na atualização dos dados';
+    tlAtualizarRodape(null);
+  }
+}
+
+async function tlAtualizarAutomaticamente(){
+  try{
+    const cargaAntes=AO_VIVO_CARGA_ID;
+    await tlCarregarDados();
+    const cargaDepois=AO_VIVO_CARGA_ID;
+
+    if(cargaDepois && cargaDepois!==cargaAntes){
+      tlInit(true);
+      console.info('[Ao Vivo Supabase] nova carga aplicada:',cargaDepois);
+    }
+  }catch(err){
+    console.warn('Atualização automática do Ao Vivo via Supabase falhou; mantendo última carga válida:',err);
+  }
+}
+
+window.addEventListener('resize',()=>{if(TL_DATA.length)tlDraw(tlFiltrados());});
+tlBootstrap();
+setInterval(tlAtualizarAutomaticamente,20*1000);
+setInterval(()=>tlAplicarPeriodoAutomatico(false),30*1000);
+</script>
+</body>
+</html>
