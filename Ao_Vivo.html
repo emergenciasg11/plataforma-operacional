@@ -409,25 +409,19 @@ function tlTipo(r){
   return null;
 }
 function tlPref(r){return String(r.eq||'').slice(0,2);}
-function tlEquipeAtivaNaLista(r){
-  if(r.lo==null)return true;
-  const agora=Number(r.ag),logoff=Number(r.lo);
-  if(!Number.isFinite(agora)||!Number.isFinite(logoff))return true;
-  return (agora-logoff)<=60;
-}
 function tlFiltrados(){
   const vP=msGet('tlPerms'),vT=msGet('tlTipoms'),vB=msGet('tlBasems'),vE=msGet('tlEqms'),vA=msGet('tlAtivms');
   const tr=document.getElementById('tlTR').checked;
   const soAl=document.getElementById('tlSoAlerta').checked;
   const todas=vA.length===TL_ATIVS.length;
   return TL_DATA
-    .filter(r=>tlEquipeAtivaNaLista(r)&&vP.includes(r.per||'')&&vT.includes(tlTipo(r))&&vB.includes(tlPref(r))&&vE.includes(r.eq))
+    .filter(r=>vP.includes(r.per||'')&&vT.includes(tlTipo(r))&&vB.includes(tlPref(r))&&vE.includes(r.eq))
     .map(r=>{const b=tlBars(r,tr);return Object.assign({},r,{bars:todas?b:b.filter(x=>vA.includes(x.tp)),allBars:tlBars(r,tr)});})
     .filter(r=>soAl?r.allBars.some(b=>b.bd):true);
 }
 function tlBaseFiltrada(){
   const vP=msGet('tlPerms'),vT=msGet('tlTipoms'),vB=msGet('tlBasems');
-  return TL_DATA.filter(r=>tlEquipeAtivaNaLista(r)&&vP.includes(r.per||'')&&vT.includes(tlTipo(r))&&vB.includes(tlPref(r)));
+  return TL_DATA.filter(r=>vP.includes(r.per||'')&&vT.includes(tlTipo(r))&&vB.includes(tlPref(r)));
 }
 function tlRebuildEq(){
   const eqs=[...new Set(tlBaseFiltrada().map(r=>r.eq))].sort();
