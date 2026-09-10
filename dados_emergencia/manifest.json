@@ -1,51 +1,51 @@
 {
-  "gerado_em": "2026-09-10T12:16:59",
+  "gerado_em": "2026-09-10T12:31:32",
   "versao": 1,
   "callback_disponivel": true,
   "callback": {
     "dataset": "callback_operview",
-    "gerado_em": "2026-09-10T12:16:59",
+    "gerado_em": "2026-09-08T09:59:56",
     "arquivo_publico": "callback.json.gz",
-    "linhas": 714,
+    "linhas": 539,
     "colunas": [
-      "Unnamed: 0",
-      "Relatório de Ligações Callback",
-      "Unnamed: 2",
-      "Unnamed: 3",
-      "Unnamed: 4",
-      "Unnamed: 5",
-      "Unnamed: 6",
-      "Unnamed: 7",
-      "Unnamed: 8",
-      "Unnamed: 9",
-      "Unnamed: 10",
-      "Unnamed: 11",
-      "Unnamed: 12"
+      "Número",
+      "Data Ligação",
+      "Sucursal",
+      "Resultado Ligação",
+      "Medida Adotada",
+      "Motivo - Normal",
+      "Nº Cliente",
+      "Usuário",
+      "Nome Usuário",
+      "Empresa",
+      "Perfil",
+      "Observação",
+      "NúmeroAviso"
     ],
-    "fonte": "C:\\Plataforma_Emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Callback\\Exportar Ligações Callback - 08-09-2026 até 10-09-2026_2026-09-10_12-16-51.xlsx",
-    "fonte_nome": "Exportar Ligações Callback - 08-09-2026 até 10-09-2026_2026-09-10_12-16-51.xlsx",
-    "fonte_modificada_em": "2026-09-10T12:16:52",
-    "fonte_sha256": "a937b1538c2ea1b1f39f0e87bd33f5369c4b22b070920fc3515a15dc39e7a5f8",
-    "tamanho_publico_bytes": 45020
+    "fonte": "C:\\Users\\BR0143306567\\OneDrive - Enel Spa\\Documentos\\Michel\\download geonline\\downloads\\Callback\\Exportar Ligações Callback - 06-09-2026 até 08-09-2026_2026-09-08_09-59-54.xlsx",
+    "fonte_nome": "Exportar Ligações Callback - 06-09-2026 até 08-09-2026_2026-09-08_09-59-54.xlsx",
+    "fonte_modificada_em": "2026-09-08T09:59:54",
+    "fonte_sha256": "69fefb2bb4759e1261e6cb0560a7aa1804546edd11e36d039254239afe0c2d39",
+    "tamanho_publico_bytes": 29746
   },
   "arquivos": {
     "incidents": {
       "arquivo": "incidents.json.gz",
-      "linhas": 242179,
-      "tamanho_bytes": 26607708,
-      "modificado_em": "2026-09-10T11:27:10"
+      "linhas": 241363,
+      "tamanho_bytes": 26526810,
+      "modificado_em": "2026-09-10T12:32:38"
     },
     "tma": {
       "arquivo": "tma.json.gz",
-      "linhas": 89323,
-      "tamanho_bytes": 4934902,
-      "modificado_em": "2026-09-10T11:24:26"
+      "linhas": 89332,
+      "tamanho_bytes": 4935229,
+      "modificado_em": "2026-09-10T12:31:30"
     },
     "modal": {
       "arquivo": "modal.json.gz",
-      "linhas": 62,
-      "tamanho_bytes": 3912,
-      "modificado_em": "2026-09-10T11:28:34"
+      "linhas": 59,
+      "tamanho_bytes": 3808,
+      "modificado_em": "2026-09-10T12:30:22"
     }
   }
 }
