@@ -604,6 +604,19 @@
       height: 22px;
     }
 
+
+    /* V58 — crédito fixo da Plataforma Operacional */
+    .creator-credit-fixed {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--muted);
+      white-space: nowrap;
+      margin-right: 2px;
+    }
+    @media (max-width: 900px) {
+      .creator-credit-fixed { display: none; }
+    }
+
 </style>
 </head>
 
@@ -853,6 +866,8 @@
       </div>
 
       <div class="top-actions">
+        <div class="creator-credit-fixed" id="creatorCreditFixed">Criado por: Estela Abreu</div>
+
         <div class="pill">
           <span class="dot"></span>
 
