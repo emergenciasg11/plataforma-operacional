@@ -6500,13 +6500,27 @@ function todayIsoDateLocal(d){
   return `${y}-${m}-${day}`;
 }
 
+function todayClockText(now=new Date()){
+  return now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',hour12:false});
+}
+
 function todayEnsureFilters(){
   const now=new Date();
   const ds=$('todayDateStart'),de=$('todayDateEnd'),ts=$('todayTimeStart'),te=$('todayTimeEnd');
+
+  if(todayAutoRange){
+    const hoje=todayIsoDateLocal(now);
+    if(ds)ds.value=hoje;
+    if(de)de.value=hoje;
+    if(ts)ts.value='00:00';
+    if(te)te.value=todayClockText(now);
+    return;
+  }
+
   if(ds&&!ds.value)ds.value=todayIsoDateLocal(now);
   if(de&&!de.value)de.value=todayIsoDateLocal(now);
   if(ts&&!ts.value)ts.value='00:00';
-  if(te&&!te.value)te.value=now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',hour12:false});
+  if(te&&!te.value)te.value=todayClockText(now);
 }
 
 function todayFilterRange(){
@@ -6515,7 +6529,7 @@ function todayFilterRange(){
   const ds=$('todayDateStart')?.value||todayIsoDateLocal(now);
   const de=$('todayDateEnd')?.value||todayIsoDateLocal(now);
   const ts=$('todayTimeStart')?.value||'00:00';
-  const te=$('todayTimeEnd')?.value||'23:59';
+  const te=$('todayTimeEnd')?.value||todayClockText(now);
 
   const [ys,ms,dsd]=ds.split('-').map(Number);
   const [ye,me,ded]=de.split('-').map(Number);
@@ -6523,11 +6537,16 @@ function todayFilterRange(){
   const [he,mine]=te.split(':').map(Number);
 
   let start=new Date(ys,ms-1,dsd,hs||0,mins||0,0,0);
-  let end=new Date(ye,me-1,ded,he||0,mine||0,59,999);
+  let end=todayAutoRange
+    ? new Date(now)
+    : new Date(ye,me-1,ded,he||0,mine||0,59,999);
+
   if(isNaN(start)||isNaN(end)){ start=todayStart(now); end=now; }
   if(end<start){ const tmp=start;start=end;end=tmp; }
   if(end>now)end=now;
-  return {start,end,now};
+
+  const lookupStart=new Date(start.getTime()-TODAY_LOOKBACK_DAYS*24*60*60*1000);
+  return {start,end,now,lookupStart,live:todayAutoRange};
 }
 
 function todayInRange(d,range){
@@ -6570,24 +6589,16 @@ function todayHourlyPoints(range){
 }
 
 function todayHistoricalHourlyPoints(range){
-  const points=todayHourlyPoints(range);
-
-  // Quando o período termina "agora", a base histórica vai somente
-  // até a hora anterior. A hora corrente é exclusiva da base Tempo Real.
-  const rangeEndsNow=Math.abs(range.now-range.end)<60*1000;
-  if(!rangeEndsNow)return points;
-
-  const currentHour=new Date(range.now);
-  currentHour.setMinutes(0,0,0);
-
-  return points.filter(point=>point<currentHour);
+  // Pontos históricos são snapshots em H:00.
+  // Em modo automático inclui também a hora cheia corrente (ex.: 15:00 às 15:43).
+  return todayHourlyPoints(range);
 }
 
 function todayRealtimeAvailableForRange(range){
   const loadedAt=state.meta?.modal?.loadedAt;
   return !!(
+    range.live &&
     state.modal.length>0 &&
-    Math.abs(range.now-range.end)<60*1000 &&
     loadedAt instanceof Date &&
     !isNaN(loadedAt) &&
     loadedAt>=range.start &&
@@ -6680,6 +6691,8 @@ function todayPassesNonDateFilters(r){
 // BA continua válido.
 // Tipos abaixo também não pertencem ao estoque de emergência.
 const TODAY_OPEN_MAX_AGE_DAYS=5;
+const TODAY_LOOKBACK_DAYS=2;
+let todayAutoRange=true;
 const TODAY_EXCLUDED_TYPES=new Set([
   'DESCONEXAO MANUAL OU MANOBRAS',
   'TRABALHO EM TENSAO',
@@ -6693,14 +6706,21 @@ function todayIsEmergencyIncident(r){
   return true;
 }
 
-function todayBaseRows(){
-  // Base histórica da aba Dia Atual.
-  // Exclui apenas o que não é incidência de emergência; não faz corte de data
-  // para permitir consultas com vários dias.
+function todayBaseRows(range){
+  // Janela de LEITURA ≠ janela VISUAL.
+  // O gráfico começa em range.start, mas a leitura retrocede 2 dias para
+  // reconstruir corretamente o estoque existente no primeiro ponto exibido.
+  const lookupStart=range?.lookupStart instanceof Date
+    ? range.lookupStart
+    : new Date((range?.start||new Date()).getTime()-TODAY_LOOKBACK_DAYS*24*60*60*1000);
+  const lookupEnd=range?.end instanceof Date?range.end:new Date();
+
   return (state.incidents||[]).filter(r=>{
     if(!todayPassesNonDateFilters(r))return false;
     if(!todayIsEmergencyIncident(r))return false;
     if(!(r.startDate instanceof Date)||isNaN(r.startDate))return false;
+    if(r.startDate<lookupStart)return false;
+    if(r.startDate>lookupEnd)return false;
     return true;
   });
 }
@@ -6821,12 +6841,12 @@ function todayFinalType(r){
 function renderToday(){
   todayEnsureFilters();
   const range=todayFilterRange();
-  const rows=todayBaseRows();
+  const rows=todayBaseRows(range);
 
   const entered=rows.filter(r=>todayInRange(r.startDate,range));
   const finalized=rows.filter(r=>todayInRange(r.endDate,range));
 
-  const rangeEndsNow=Math.abs(range.now-range.end)<60*1000;
+  const rangeEndsNow=range.live;
   const canUseRealtime=todayRealtimeAvailableForRange(range);
 
   // No instante atual, a fonte correta é a base Tempo Real.
@@ -6883,7 +6903,8 @@ function renderToday(){
   const stockRows=[];
 
   stockPoints.forEach(point=>{
-    const abertas=todayOpenRowsForHourBucket(rows,point,range);
+    // Snapshot exato: quantas incidências estavam abertas precisamente em H:00.
+    const abertas=todayOpenStockAt(rows,point,range);
     stockY.push(abertas.length);
     stockRows.push(abertas);
   });
@@ -8623,19 +8644,26 @@ function bindEvents(){
   }
 
   const btnTodayApply=$('btnTodayApply');
-  if(btnTodayApply)btnTodayApply.addEventListener('click',()=>{renderToday();toast('Filtros de Dia Atual aplicados.','success')});
+  if(btnTodayApply)btnTodayApply.addEventListener('click',()=>{
+    todayAutoRange=false;
+    renderToday();
+    toast('Filtros de Dia Atual aplicados em modo manual.','success');
+  });
+
   const btnTodayReset=$('btnTodayReset');
   if(btnTodayReset)btnTodayReset.addEventListener('click',()=>{
-    const now=new Date();
-    if($('todayDateStart'))$('todayDateStart').value=todayIsoDateLocal(now);
-    if($('todayDateEnd'))$('todayDateEnd').value=todayIsoDateLocal(now);
-    if($('todayTimeStart'))$('todayTimeStart').value='00:00';
-    if($('todayTimeEnd'))$('todayTimeEnd').value=now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',hour12:false});
+    todayAutoRange=true;
+    todayEnsureFilters();
     renderToday();
+    toast('Dia Atual voltou ao modo automático: hoje até agora.','success');
   });
+
   ['todayDateStart','todayDateEnd','todayTimeStart','todayTimeEnd'].forEach(id=>{
     const el=$(id);
-    if(el)el.addEventListener('change',()=>{if(state.activeTab==='today')renderToday()});
+    if(el)el.addEventListener('change',()=>{
+      todayAutoRange=false;
+      if(state.activeTab==='today')renderToday();
+    });
   });
 $('btnPrint').addEventListener('click',()=>window.print());$('btnExportSummary').addEventListener('click',()=>exportBy('executive'));
   qsa('[data-export]').forEach(b=>b.addEventListener('click',()=>exportBy(b.dataset.export)));
@@ -8751,6 +8779,11 @@ async function atualizarTempoRealEObservacoesSupabase(forcar=false){
     await carregarObservacoesEmergencia();
     if((mudou||forcar)&&state.activeTab==='realtime'){refreshFilterOptions();renderRealtime();}
     else if(state.activeTab==='realtime')renderRealtime();
+
+    if(state.activeTab==='today'&&todayAutoRange){
+      todayEnsureFilters();
+      renderToday();
+    }
     return true;
   }catch(error){console.warn('Supabase Emergência indisponível; mantendo último dado válido.',error);return false;}
 }
@@ -8908,7 +8941,8 @@ async function atualizarEquipesAbertas(renderizar=false){
     equipesAbertasAtualizadoEm=atualizado;
 
     if(mudou&&renderizar&&['realtime','today'].includes(state.activeTab)){
-      renderRealtime();
+      if(state.activeTab==='today')renderToday();
+      else renderRealtime();
     }
     return mudou;
   }catch(error){
@@ -9183,6 +9217,12 @@ async function init(){
   setInterval(updateClock,1000);
   setInterval(()=>{
     if(state.activeTab==='realtime'&&(state.modal.length||state.incidents.length))renderRealtime();
+
+    // Dia Atual acompanha o relógio somente em modo automático.
+    if(state.activeTab==='today'&&todayAutoRange&&(state.incidents.length||state.modal.length)){
+      todayEnsureFilters();
+      renderToday();
+    }
   },60000);
 
   setLoading(true,'Carregando bases publicadas...');
@@ -9245,5 +9285,6 @@ document.addEventListener('DOMContentLoaded',init);
 <!-- REGRAS_PROCESSO_VIATURA_ABC_MOE_V1 -->
 <!-- DIA_ATUAL_V6_LOGICA_EXATA_PANORAMA_GEONLINE_ORIGINAL -->
 <!-- DIA_ATUAL_V9_SEQUENCIA_MULTIDIAS_CORRIGIDA -->
+<!-- DIA_ATUAL_V10_AUTO_LOOKBACK2D_SNAPSHOT_HORA_CHEIA -->
 </body>
 </html>
