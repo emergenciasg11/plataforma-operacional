@@ -11175,7 +11175,7 @@ function renderValidacaoPos(){
     el.innerHTML=`<div class="vpa"><div class="vpa-head"><div class="vpa-title"><div class="vpa-crumb">Validação Pós-Atendimento</div><h2>Validação Pós-Atendimento</h2><p>Auditoria da percepção do cliente e da efetividade real dos serviços executados em campo</p></div><div class="vpa-actions"><button class="vpa-btn primary" id="vpaReloadEmpty">↻ Atualizar base</button></div></div><div class="vpa-empty"><h3>Carregando a base de Validação Pós-Atendimento</h3><p>A base é atualizada automaticamente pela automação integrada. Use o botão abaixo para tentar novamente.</p><button class="vpa-btn primary" id="vpaReloadEmpty2">Atualizar agora</button></div></div>`;
     ['vpaReloadEmpty','vpaReloadEmpty2'].forEach(id=>{
       const botao=document.getElementById(id);
-      if(botao)botao.onclick=()=>carregarValidacaoLocalhost(true);
+      if(botao)botao.onclick=()=>atualizarValidacaoComReincidencia(true);
     });
     return;
   }
@@ -13085,6 +13085,66 @@ async function lerJsonGzip(response){
   );
 }
 
+let reincidenciaOficialLeveLoading=false;
+let reincidenciaOficialLeveSignature='';
+
+async function carregarReincidenciaOficialLeve(){
+  if(reincidenciaOficialLeveLoading)return false;
+  reincidenciaOficialLeveLoading=true;
+  try{
+    const response=await fetch('./dados_clientes/reincidencia_oficial.json.gz',{cache:'no-cache'});
+    if(!response.ok)throw new Error(`HTTP ${response.status}`);
+    const payload=await lerJsonGzip(response);
+    if(!payload||!Array.isArray(payload.rows))throw new Error('reincidencia_oficial.json.gz inválido.');
+
+    const assinatura=[payload.generated_at||'',payload.rows.length].join('|');
+    if(assinatura===reincidenciaOficialLeveSignature && S.baseReincidencia.length)return true;
+
+    const rows=normalizeReincidenciaRows(payload.rows).rows;
+    const out=[];
+    for(const r of rows){
+      const cli=r[COL2.nCliente];
+      const d=parseDateVal(r[COL2.dataFim]);
+      if(!isValidClientId(cli)||!d)continue;
+
+      r.__dataInicio=parseDateVal(r[COL2.dataInicio]);
+      r.__dataFim=d;
+      r.__ano=d.getFullYear();
+      r.__mes=d.getMonth()+1;
+
+      r.__nextNumero=r.__nextNumero_json||r[COL2.numeroRein]||r[COL2.numeroRein2]||null;
+      r.__nextDataInicio=parseDateVal(r.__nextDataInicio_json);
+      r.__nextDataFim=parseDateVal(r.__nextDataFim_json);
+      r.__nextCausa=r.__nextCausa_json||null;
+      r.__nextEquipeDesl=r.__nextEquipeDesl_json||null;
+      r.__nextEstado=r.__nextEstado_json||null;
+      out.push(r);
+    }
+
+    S.baseReincidencia=out;
+    S.reincidenciaFileName='reincidencia_oficial.json.gz';
+    S.reincidenciaProcessedAt=payload.generated_at?new Date(payload.generated_at):new Date();
+    S.reincidenciaStats={totalLido:rows.length,semCliente:rows.length-out.length,semData:0};
+    reincidenciaOficialLeveSignature=assinatura;
+    return true;
+  }catch(error){
+    console.error('Falha ao carregar reincidência oficial para a Validação:',error);
+    return false;
+  }finally{
+    reincidenciaOficialLeveLoading=false;
+  }
+}
+
+async function atualizarValidacaoComReincidencia(mostrarMensagem=false){
+  await Promise.all([
+    carregarReincidenciaOficialLeve(),
+    carregarValidacaoLocalhost(mostrarMensagem)
+  ]);
+  enrichValidationBase();
+  if(S.currentTab==='validacaoPos')renderValidacaoPos();
+  return true;
+}
+
 async function carregarValidacaoLocalhost(mostrarMensagem=false){
   if(validationBaseLoading)return false;
   validationBaseLoading=true;
@@ -13529,7 +13589,7 @@ async function carregarPaginaInicialPrioritaria(){
   // Cada item da Plataforma Operacional usa este mesmo HTML com ?tab=...
   // Carrega primeiro — e somente — o conjunto necessário para a página aberta.
   if(tab==='validacaoPos'){
-    await carregarValidacaoLocalhost(false);
+    await atualizarValidacaoComReincidencia(false);
     await carregarRegistrosValidacaoServidor();
     tentarAbrirAbaInicial();
     return;
@@ -13570,7 +13630,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   // Atualizações periódicas somente da página que está aberta.
   if(ABA_INICIAL_URL==='validacaoPos'){
-    setInterval(()=>carregarValidacaoLocalhost(false),5*60*1000);
+    setInterval(()=>atualizarValidacaoComReincidencia(false),5*60*1000);
     setInterval(()=>carregarRegistrosValidacaoServidor(),60*1000);
   }else if(ABA_INICIAL_URL==='callbackContingencia'){
     setInterval(()=>carregarBaseLocalhost(false),5*60*1000);
