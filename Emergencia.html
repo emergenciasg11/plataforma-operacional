@@ -6787,11 +6787,15 @@ function todayOpenAt(rows,instant){
 }
 
 function todayOpenStockAt(rows,instant,range){
-  // Estoque histórico no instante:
-  // - abriu até o instante;
-  // - se tem Data Fim, ainda não havia terminado;
-  // - se NÃO tem Data Fim, precisa estar ACTIVO;
-  // - incidência sem Data Fim deixa de ser considerada aberta após 5 dias.
+  // TESTE V4 — reconstrução histórica objetiva pela linha temporal.
+  // A seleção de D-2 já é feita em todayBaseRows().
+  //
+  // Para cada H:00:
+  // 1) ainda não abriu -> fora;
+  // 2) tem Data Fim -> conta somente enquanto Data Fim > H:00;
+  // 3) não tem Data Fim -> considera aberta naquele instante.
+  //
+  // Não depender do texto de Estado para reconstruir o histórico.
   return (rows||[]).filter(r=>{
     if(!(r.startDate instanceof Date)||isNaN(r.startDate))return false;
     if(r.startDate>instant)return false;
@@ -6799,15 +6803,7 @@ function todayOpenStockAt(rows,instant,range){
     const hasEnd=(r.endDate instanceof Date)&&!isNaN(r.endDate);
     if(hasEnd)return r.endDate>instant;
 
-    // Sem Data Fim: usar a mesma regra geral de registro ativo.
-    // Antes havia comparação EXATA com "ACTIVO", o que descartava
-    // estados equivalentes/linhas sem fim e derrubava artificialmente o estoque.
-    if(!isActiveRecord(r))return false;
-
-    const forcedEnd=new Date(
-      r.startDate.getTime()+TODAY_OPEN_MAX_AGE_DAYS*24*60*60*1000
-    );
-    return instant<forcedEnd;
+    return true;
   });
 }
 
@@ -6919,9 +6915,9 @@ function renderToday(){
 
   // ----------------------------------------------------------------
   // 1º gráfico:
-  // cada hora histórica é um INTERVALO de 60 minutos.
-  // Uma incidência aparece em todas as horas sobrepostas entre
-  // Data Início e Data Fim. A hora atual vem da base Tempo Real.
+  // cada ponto histórico é um SNAPSHOT EXATO em H:00.
+  // Histórico = base de Incidências.
+  // Ponto atual = base Tempo Real.
   // ----------------------------------------------------------------
   const stockPoints=todayHistoricalHourlyPoints(range);
   const stockY=[];
@@ -9334,5 +9330,6 @@ document.addEventListener('DOMContentLoaded',init);
 <!-- DIA_ATUAL_V10_AUTO_LOOKBACK2D_SNAPSHOT_HORA_CHEIA -->
 <!-- DIA_ATUAL_V11_V58_PUBLICACAO_FORCADA -->
 <!-- TEMPO_REAL_TOP5_APENAS_MT_SEM_ALTERAR_CARTOES_V2 -->
+<!-- DIA_ATUAL_TESTE_SNAPSHOT_HISTORICO_SEM_ESTADO_V4 -->
 </body>
 </html>
