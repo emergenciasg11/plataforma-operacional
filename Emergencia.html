@@ -712,6 +712,27 @@ tr.risk24-watch:hover td{filter:brightness(.97)}
 }
 
 
+
+/* TOP5_FILTRO_APENAS_MT_E_DURACAO_CALLBACK_V2 */
+.impact-filter-mt{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  color:#fff;
+  font-size:11px;
+  font-weight:800;
+  white-space:nowrap;
+  cursor:pointer;
+  user-select:none;
+}
+.impact-filter-mt input{
+  width:15px;
+  height:15px;
+  margin:0;
+  accent-color:#2f8b43;
+  cursor:pointer;
+}
+
 /* TOP5_EXPORTACAO_SEM_LOGO_ESTAVEL_V8 */
 </style>
   <script src="supabase_config.js"></script>
@@ -969,6 +990,10 @@ tr.risk24-watch:hover td{filter:brightness(.97)}
               <small>Incidências ativas ordenadas pelo Cli Af Atual</small>
             </div>
             <div class="impact-limit-control">
+              <label class="impact-filter-mt" for="rtImpactOnlyMt" title="Exibir apenas MT Ramal e MT Tronco">
+                <input type="checkbox" id="rtImpactOnlyMt">
+                <span>Apenas MT</span>
+              </label>
               <label for="rtImpactLimit">Exibir</label>
               <select id="rtImpactLimit">
                 <option value="5">Top 5</option>
@@ -7476,15 +7501,34 @@ function renderRealtime(){
     $('rtExecutiveSummary').innerHTML=`Na Base de São Gonçalo estamos no momento com <strong>${fmtInt(mtCount)} incidências MT</strong>. Temos <strong>${fmtInt(totalImpact)} clientes afetados</strong>, onde concentramos <strong>${fmt1(top5ImpactPct)}% dos impactos nas 5 maiores ocorrências</strong>. Atuamos no momento com <strong>${equipesTexto} Equipes</strong>. As <strong>${fmtInt(mtCount)} incidências MT representam ${fmt1(mtImpactPct)}% da afetação total</strong>.`;
   }
 
+  function realtimeImpactIsMtOnly(r){
+    const nt=norm(r?.ntRaw||'');
+    return nt==='MT RAMAL'||nt==='MT TRONCO';
+  }
+
   function renderImpactRanking(){
     const limitValue=$('rtImpactLimit')?.value||'5';
-    const selectedLimit=limitValue==='ALL'?impactAll.length:Math.max(1,Number(limitValue)||5);
-    const impactRows=impactAll.slice(0,selectedLimit);
+    const onlyMt=!!$('rtImpactOnlyMt')?.checked;
+
+    // O filtro MT atua ANTES do Top N e apenas sobre a tabela.
+    // Cartões/indicadores continuam calculados pela base completa, sem alteração.
+    const impactSource=onlyMt
+      ? impactAll.filter(realtimeImpactIsMtOnly)
+      : impactAll;
+
+    const selectedLimit=limitValue==='ALL'?impactSource.length:Math.max(1,Number(limitValue)||5);
+    const impactRows=impactSource.slice(0,selectedLimit);
+
+    // Mantém exatamente a lógica original dos cartões:
+    // selectedImpact continua refletindo apenas as linhas atualmente exibidas,
+    // mas totalImpact, mtImpact e demais cartões permanecem baseados na tabela inteira.
     const selectedImpact=sum(impactRows.map(r=>Number(r.clientsCurrent)||0));
     const selectedImpactPct=totalImpact>0?(selectedImpact/totalImpact)*100:0;
     const selectedLabel=limitValue==='ALL'?'Todas':`Top ${selectedLimit}`;
 
-    if($('rtImpactTitle'))$('rtImpactTitle').textContent=`${selectedLabel} maiores afetações`;
+    if($('rtImpactTitle'))$('rtImpactTitle').textContent=onlyMt
+      ? `${selectedLabel} maiores afetações — Apenas MT`
+      : `${selectedLabel} maiores afetações`;
 
     renderTable('rtImpactTable',[
       {label:'#',value:r=>impactRows.indexOf(r)+1,sortValue:r=>impactRows.indexOf(r)+1,class:'num'},
@@ -7512,6 +7556,7 @@ function renderRealtime(){
 
   renderImpactRanking();
   if($('rtImpactLimit'))$('rtImpactLimit').onchange=renderImpactRanking;
+  if($('rtImpactOnlyMt'))$('rtImpactOnlyMt').onchange=renderImpactRanking;
 
 
   const durationRows=rows
@@ -8258,6 +8303,7 @@ function renderRealtime(){
   const callbackStatus=currentCallbackView(rows).map(r=>{const c=callbackSummary(r);return {row:r,count:c.count,last:c.last,summary:c.summary};}).sort((a,b)=>(a.count>0)-(b.count>0)||realtimeAgeHours(b.row,now)-realtimeAgeHours(a.row,now));
   renderTable('rtCallbackStatus',[
     {label:'Número',value:x=>x.row.number,sortValue:x=>x.row.number},
+    {label:'Duração',value:x=>`${fmt1(realtimeAgeHours(x.row,now))}h`,sortValue:x=>realtimeAgeHours(x.row,now),class:'num'},
     {label:'Situação',html:x=>badge(x.count?'Com callback':'Sem callback',x.count?'green':'red'),sortValue:x=>x.count>0?1:0},
     {label:'Qtd.',value:x=>fmtInt(x.count),sortValue:x=>x.count,class:'num'},
     {label:'Usuário',value:x=>x.last?callbackDisplayUser(x.last):'—',sortValue:x=>x.last?callbackDisplayUser(x.last):''},
@@ -9287,5 +9333,6 @@ document.addEventListener('DOMContentLoaded',init);
 <!-- DIA_ATUAL_V9_SEQUENCIA_MULTIDIAS_CORRIGIDA -->
 <!-- DIA_ATUAL_V10_AUTO_LOOKBACK2D_SNAPSHOT_HORA_CHEIA -->
 <!-- DIA_ATUAL_V11_V58_PUBLICACAO_FORCADA -->
+<!-- TEMPO_REAL_TOP5_APENAS_MT_SEM_ALTERAR_CARTOES_V2 -->
 </body>
 </html>
