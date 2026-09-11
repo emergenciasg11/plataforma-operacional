@@ -840,15 +840,6 @@ tr.risk24-watch:hover td{filter:brightness(.97)}
       </div>
 
       <div class="grid kpi-grid" id="todayKpis"></div>
-      <div id="todayDebugPanel" class="panel" style="margin-bottom:12px;border-color:#f0d59b">
-        <div class="panel-head" style="background:#8a6500">
-          <h3>Diagnóstico técnico — Dia Atual</h3>
-          <small>Temporário: identifica em qual etapa as incidências históricas estão sendo descartadas</small>
-        </div>
-        <div class="panel-body">
-          <div id="todayDebugText" style="font:600 11px/1.55 'Segoe UI',Arial,sans-serif;color:#314653;white-space:normal"></div>
-        </div>
-      </div>
 
       <div class="panel" style="margin-bottom:12px">
         <div class="panel-head blue">
@@ -6847,51 +6838,10 @@ function todayFinalType(r){
   return 'Não contabilizada';
 }
 
-
-function renderTodayDebug(range,rows){
-  const el=$('todayDebugText');
-  if(!el)return;
-
-  const all=state.incidents||[];
-  const validStart=all.filter(r=>r.startDate instanceof Date&&!isNaN(r.startDate));
-  const emergency=validStart.filter(todayIsEmergencyIncident);
-  const nonDate=emergency.filter(todayPassesNonDateFilters);
-  const lookupStart=range?.lookupStart instanceof Date?range.lookupStart:null;
-  const lookupEnd=range?.end instanceof Date?range.end:null;
-  const afterLookup=nonDate.filter(r=>
-    (!lookupStart||r.startDate>=lookupStart) &&
-    (!lookupEnd||r.startDate<=lookupEnd)
-  );
-
-  const snapshotRaw=(instant)=>afterLookup.filter(r=>{
-    if(!(r.startDate instanceof Date)||isNaN(r.startDate))return false;
-    if(r.startDate>instant)return false;
-    const hasEnd=(r.endDate instanceof Date)&&!isNaN(r.endDate);
-    return !hasEnd||r.endDate>instant;
-  }).length;
-
-  const points=[0,6,9,10].map(h=>{
-    const d=new Date(range.start);
-    d.setHours(h,0,0,0);
-    return `${String(h).padStart(2,'0')}:00 = ${snapshotRaw(d)}`;
-  });
-
-  el.innerHTML=[
-    `<strong>Base Incidências carregada:</strong> ${fmtInt(all.length)}`,
-    `<strong>Data Início válida:</strong> ${fmtInt(validStart.length)}`,
-    `<strong>Após regra emergência:</strong> ${fmtInt(emergency.length)}`,
-    `<strong>Após filtros não relacionados a data:</strong> ${fmtInt(nonDate.length)}`,
-    `<strong>Dentro da janela D-2 até fim:</strong> ${fmtInt(afterLookup.length)}`,
-    `<strong>Snapshots brutos:</strong> ${points.join(' • ')}`,
-    `<strong>Tempo Real carregado:</strong> ${fmtInt((state.modal||[]).length)}`
-  ].join('<br>');
-}
-
 function renderToday(){
   todayEnsureFilters();
   const range=todayFilterRange();
   const rows=todayBaseRows(range);
-  renderTodayDebug(range,rows);
 
   const entered=rows.filter(r=>todayInRange(r.startDate,range));
   const finalized=rows.filter(r=>todayInRange(r.endDate,range));
@@ -9337,6 +9287,5 @@ document.addEventListener('DOMContentLoaded',init);
 <!-- DIA_ATUAL_V9_SEQUENCIA_MULTIDIAS_CORRIGIDA -->
 <!-- DIA_ATUAL_V10_AUTO_LOOKBACK2D_SNAPSHOT_HORA_CHEIA -->
 <!-- DIA_ATUAL_V11_V58_PUBLICACAO_FORCADA -->
-<!-- DIA_ATUAL_DIAGNOSTICO_SEGURO_V1 -->
 </body>
 </html>
