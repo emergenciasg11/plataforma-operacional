@@ -712,27 +712,6 @@ tr.risk24-watch:hover td{filter:brightness(.97)}
 }
 
 
-
-/* TOP5_FILTRO_APENAS_MT_E_DURACAO_CALLBACK_V2 */
-.impact-filter-mt{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  color:#fff;
-  font-size:11px;
-  font-weight:800;
-  white-space:nowrap;
-  cursor:pointer;
-  user-select:none;
-}
-.impact-filter-mt input{
-  width:15px;
-  height:15px;
-  margin:0;
-  accent-color:#2f8b43;
-  cursor:pointer;
-}
-
 /* TOP5_EXPORTACAO_SEM_LOGO_ESTAVEL_V8 */
 </style>
   <script src="supabase_config.js"></script>
@@ -861,6 +840,15 @@ tr.risk24-watch:hover td{filter:brightness(.97)}
       </div>
 
       <div class="grid kpi-grid" id="todayKpis"></div>
+      <div id="todayDebugPanel" class="panel" style="margin-bottom:12px;border-color:#f0d59b">
+        <div class="panel-head" style="background:#8a6500">
+          <h3>Diagnóstico técnico — Dia Atual</h3>
+          <small>Temporário: identifica em qual etapa as incidências históricas estão sendo descartadas</small>
+        </div>
+        <div class="panel-body">
+          <div id="todayDebugText" style="font:600 11px/1.55 'Segoe UI',Arial,sans-serif;color:#314653;white-space:normal"></div>
+        </div>
+      </div>
 
       <div class="panel" style="margin-bottom:12px">
         <div class="panel-head blue">
@@ -990,10 +978,6 @@ tr.risk24-watch:hover td{filter:brightness(.97)}
               <small>Incidências ativas ordenadas pelo Cli Af Atual</small>
             </div>
             <div class="impact-limit-control">
-              <label class="impact-filter-mt" for="rtImpactOnlyMt" title="Exibir apenas MT Ramal e MT Tronco">
-                <input type="checkbox" id="rtImpactOnlyMt">
-                <span>Apenas MT</span>
-              </label>
               <label for="rtImpactLimit">Exibir</label>
               <select id="rtImpactLimit">
                 <option value="5">Top 5</option>
@@ -6787,15 +6771,11 @@ function todayOpenAt(rows,instant){
 }
 
 function todayOpenStockAt(rows,instant,range){
-  // TESTE V4 — reconstrução histórica objetiva pela linha temporal.
-  // A seleção de D-2 já é feita em todayBaseRows().
-  //
-  // Para cada H:00:
-  // 1) ainda não abriu -> fora;
-  // 2) tem Data Fim -> conta somente enquanto Data Fim > H:00;
-  // 3) não tem Data Fim -> considera aberta naquele instante.
-  //
-  // Não depender do texto de Estado para reconstruir o histórico.
+  // Estoque histórico no instante:
+  // - abriu até o instante;
+  // - se tem Data Fim, ainda não havia terminado;
+  // - se NÃO tem Data Fim, precisa estar ACTIVO;
+  // - incidência sem Data Fim deixa de ser considerada aberta após 5 dias.
   return (rows||[]).filter(r=>{
     if(!(r.startDate instanceof Date)||isNaN(r.startDate))return false;
     if(r.startDate>instant)return false;
@@ -6803,7 +6783,15 @@ function todayOpenStockAt(rows,instant,range){
     const hasEnd=(r.endDate instanceof Date)&&!isNaN(r.endDate);
     if(hasEnd)return r.endDate>instant;
 
-    return true;
+    // Sem Data Fim: usar a mesma regra geral de registro ativo.
+    // Antes havia comparação EXATA com "ACTIVO", o que descartava
+    // estados equivalentes/linhas sem fim e derrubava artificialmente o estoque.
+    if(!isActiveRecord(r))return false;
+
+    const forcedEnd=new Date(
+      r.startDate.getTime()+TODAY_OPEN_MAX_AGE_DAYS*24*60*60*1000
+    );
+    return instant<forcedEnd;
   });
 }
 
@@ -6859,10 +6847,51 @@ function todayFinalType(r){
   return 'Não contabilizada';
 }
 
+
+function renderTodayDebug(range,rows){
+  const el=$('todayDebugText');
+  if(!el)return;
+
+  const all=state.incidents||[];
+  const validStart=all.filter(r=>r.startDate instanceof Date&&!isNaN(r.startDate));
+  const emergency=validStart.filter(todayIsEmergencyIncident);
+  const nonDate=emergency.filter(todayPassesNonDateFilters);
+  const lookupStart=range?.lookupStart instanceof Date?range.lookupStart:null;
+  const lookupEnd=range?.end instanceof Date?range.end:null;
+  const afterLookup=nonDate.filter(r=>
+    (!lookupStart||r.startDate>=lookupStart) &&
+    (!lookupEnd||r.startDate<=lookupEnd)
+  );
+
+  const snapshotRaw=(instant)=>afterLookup.filter(r=>{
+    if(!(r.startDate instanceof Date)||isNaN(r.startDate))return false;
+    if(r.startDate>instant)return false;
+    const hasEnd=(r.endDate instanceof Date)&&!isNaN(r.endDate);
+    return !hasEnd||r.endDate>instant;
+  }).length;
+
+  const points=[0,6,9,10].map(h=>{
+    const d=new Date(range.start);
+    d.setHours(h,0,0,0);
+    return `${String(h).padStart(2,'0')}:00 = ${snapshotRaw(d)}`;
+  });
+
+  el.innerHTML=[
+    `<strong>Base Incidências carregada:</strong> ${fmtInt(all.length)}`,
+    `<strong>Data Início válida:</strong> ${fmtInt(validStart.length)}`,
+    `<strong>Após regra emergência:</strong> ${fmtInt(emergency.length)}`,
+    `<strong>Após filtros não relacionados a data:</strong> ${fmtInt(nonDate.length)}`,
+    `<strong>Dentro da janela D-2 até fim:</strong> ${fmtInt(afterLookup.length)}`,
+    `<strong>Snapshots brutos:</strong> ${points.join(' • ')}`,
+    `<strong>Tempo Real carregado:</strong> ${fmtInt((state.modal||[]).length)}`
+  ].join('<br>');
+}
+
 function renderToday(){
   todayEnsureFilters();
   const range=todayFilterRange();
   const rows=todayBaseRows(range);
+  renderTodayDebug(range,rows);
 
   const entered=rows.filter(r=>todayInRange(r.startDate,range));
   const finalized=rows.filter(r=>todayInRange(r.endDate,range));
@@ -6915,9 +6944,9 @@ function renderToday(){
 
   // ----------------------------------------------------------------
   // 1º gráfico:
-  // cada ponto histórico é um SNAPSHOT EXATO em H:00.
-  // Histórico = base de Incidências.
-  // Ponto atual = base Tempo Real.
+  // cada hora histórica é um INTERVALO de 60 minutos.
+  // Uma incidência aparece em todas as horas sobrepostas entre
+  // Data Início e Data Fim. A hora atual vem da base Tempo Real.
   // ----------------------------------------------------------------
   const stockPoints=todayHistoricalHourlyPoints(range);
   const stockY=[];
@@ -7497,34 +7526,15 @@ function renderRealtime(){
     $('rtExecutiveSummary').innerHTML=`Na Base de São Gonçalo estamos no momento com <strong>${fmtInt(mtCount)} incidências MT</strong>. Temos <strong>${fmtInt(totalImpact)} clientes afetados</strong>, onde concentramos <strong>${fmt1(top5ImpactPct)}% dos impactos nas 5 maiores ocorrências</strong>. Atuamos no momento com <strong>${equipesTexto} Equipes</strong>. As <strong>${fmtInt(mtCount)} incidências MT representam ${fmt1(mtImpactPct)}% da afetação total</strong>.`;
   }
 
-  function realtimeImpactIsMtOnly(r){
-    const nt=norm(r?.ntRaw||'');
-    return nt==='MT RAMAL'||nt==='MT TRONCO';
-  }
-
   function renderImpactRanking(){
     const limitValue=$('rtImpactLimit')?.value||'5';
-    const onlyMt=!!$('rtImpactOnlyMt')?.checked;
-
-    // O filtro MT atua ANTES do Top N e apenas sobre a tabela.
-    // Cartões/indicadores continuam calculados pela base completa, sem alteração.
-    const impactSource=onlyMt
-      ? impactAll.filter(realtimeImpactIsMtOnly)
-      : impactAll;
-
-    const selectedLimit=limitValue==='ALL'?impactSource.length:Math.max(1,Number(limitValue)||5);
-    const impactRows=impactSource.slice(0,selectedLimit);
-
-    // Mantém exatamente a lógica original dos cartões:
-    // selectedImpact continua refletindo apenas as linhas atualmente exibidas,
-    // mas totalImpact, mtImpact e demais cartões permanecem baseados na tabela inteira.
+    const selectedLimit=limitValue==='ALL'?impactAll.length:Math.max(1,Number(limitValue)||5);
+    const impactRows=impactAll.slice(0,selectedLimit);
     const selectedImpact=sum(impactRows.map(r=>Number(r.clientsCurrent)||0));
     const selectedImpactPct=totalImpact>0?(selectedImpact/totalImpact)*100:0;
     const selectedLabel=limitValue==='ALL'?'Todas':`Top ${selectedLimit}`;
 
-    if($('rtImpactTitle'))$('rtImpactTitle').textContent=onlyMt
-      ? `${selectedLabel} maiores afetações — Apenas MT`
-      : `${selectedLabel} maiores afetações`;
+    if($('rtImpactTitle'))$('rtImpactTitle').textContent=`${selectedLabel} maiores afetações`;
 
     renderTable('rtImpactTable',[
       {label:'#',value:r=>impactRows.indexOf(r)+1,sortValue:r=>impactRows.indexOf(r)+1,class:'num'},
@@ -7552,7 +7562,6 @@ function renderRealtime(){
 
   renderImpactRanking();
   if($('rtImpactLimit'))$('rtImpactLimit').onchange=renderImpactRanking;
-  if($('rtImpactOnlyMt'))$('rtImpactOnlyMt').onchange=renderImpactRanking;
 
 
   const durationRows=rows
@@ -8299,7 +8308,6 @@ function renderRealtime(){
   const callbackStatus=currentCallbackView(rows).map(r=>{const c=callbackSummary(r);return {row:r,count:c.count,last:c.last,summary:c.summary};}).sort((a,b)=>(a.count>0)-(b.count>0)||realtimeAgeHours(b.row,now)-realtimeAgeHours(a.row,now));
   renderTable('rtCallbackStatus',[
     {label:'Número',value:x=>x.row.number,sortValue:x=>x.row.number},
-    {label:'Duração',value:x=>`${fmt1(realtimeAgeHours(x.row,now))}h`,sortValue:x=>realtimeAgeHours(x.row,now),class:'num'},
     {label:'Situação',html:x=>badge(x.count?'Com callback':'Sem callback',x.count?'green':'red'),sortValue:x=>x.count>0?1:0},
     {label:'Qtd.',value:x=>fmtInt(x.count),sortValue:x=>x.count,class:'num'},
     {label:'Usuário',value:x=>x.last?callbackDisplayUser(x.last):'—',sortValue:x=>x.last?callbackDisplayUser(x.last):''},
@@ -9329,7 +9337,6 @@ document.addEventListener('DOMContentLoaded',init);
 <!-- DIA_ATUAL_V9_SEQUENCIA_MULTIDIAS_CORRIGIDA -->
 <!-- DIA_ATUAL_V10_AUTO_LOOKBACK2D_SNAPSHOT_HORA_CHEIA -->
 <!-- DIA_ATUAL_V11_V58_PUBLICACAO_FORCADA -->
-<!-- TEMPO_REAL_TOP5_APENAS_MT_SEM_ALTERAR_CARTOES_V2 -->
-<!-- DIA_ATUAL_TESTE_SNAPSHOT_HISTORICO_SEM_ESTADO_V4 -->
+<!-- DIA_ATUAL_DIAGNOSTICO_SEGURO_V1 -->
 </body>
 </html>
