@@ -6408,7 +6408,14 @@ function enrichRealtimeRecord(r){
   }
   x.vehicleType=classifyVehicle(x.team);x.improductive=isUnproductive(x);return x;
 }
-function realtimeBacklogRows(rows=realtimeRows(),now=new Date()){const today=dayStart(now);return rows.filter(r=>r.startDate&&r.startDate<today);}
+function realtimeBacklogRows(rows=realtimeRows(),now=new Date()){
+  const today=dayStart(now);
+  return rows.filter(r=>
+    r.startDate instanceof Date &&
+    !isNaN(r.startDate) &&
+    r.startDate<today
+  );
+}
 function recurrenceInfo(r){
   const client=String(r?.clientNumber??'').trim();const currentStart=r?.startDate;if(!client||!currentStart)return null;
   let best=null,bestGap=Infinity;
@@ -8922,10 +8929,46 @@ const AUTO_KEYS = {
 
 function autoExpandRow(raw,dataset,index){
   const row={_index:index,_dataset:dataset};
-  for(const [shortKey,value] of Object.entries(raw||{})){
-    const fullKey=AUTO_KEYS[shortKey];
-    if(fullKey)row[fullKey]=value;
+
+  // V64:
+  // O Supabase pode receber os dados em três formatos:
+  // 1) chaves compactas (di, df, du...);
+  // 2) chaves internas completas (startDate, endDate...);
+  // 3) nomes originais da planilha (Data Início, DataFim...).
+  // Antes, apenas o formato compacto era aceito; qualquer outro era descartado.
+  const canonicalKeys=new Set(Object.values(AUTO_KEYS));
+
+  for(const [sourceKey,value] of Object.entries(raw||{})){
+    // Formato compacto.
+    const compactKey=AUTO_KEYS[sourceKey];
+    if(compactKey){
+      row[compactKey]=value;
+      continue;
+    }
+
+    // Formato interno já expandido.
+    if(canonicalKeys.has(sourceKey)){
+      row[sourceKey]=value;
+      continue;
+    }
+
+    // Formato com cabeçalho original da planilha.
+    // Reaproveita as mesmas aliases usadas pelo importador Excel.
+    for(const [field,aliases] of Object.entries(HEADER_ALIASES)){
+      if(field.startsWith('callbackDate')||field.startsWith('callbackContact')||
+         field.startsWith('callbackAction')||field.startsWith('callbackPhone'))continue;
+
+      const sourceNorm=norm(sourceKey);
+      if((aliases||[]).some(alias=>norm(alias)===sourceNorm)){
+        const target=field==='nt'?'ntRaw':
+                     field==='duration'?'durationMinutes':
+                     field;
+        row[target]=value;
+        break;
+      }
+    }
   }
+
   row.number=normalizeIncidentNumber(row.number);
   row.ntRaw=String(row.ntRaw??'').trim();
   row.state=String(row.state??'').trim();
@@ -9368,5 +9411,6 @@ document.addEventListener('DOMContentLoaded',init);
 <!-- DIA_ATUAL_V11_V58_PUBLICACAO_FORCADA -->
 <!-- DIA_ATUAL_DIAGNOSTICO_SEGURO_V1 -->
 <!-- V62_MT_DURACAO_PERSISTENTE -->
+<!-- V64_BACKLOG_SUPABASE_PRESERVA_DATA_INICIO -->
 </body>
 </html>
