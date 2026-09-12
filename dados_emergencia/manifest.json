@@ -1,12 +1,12 @@
 {
-  "gerado_em": "2026-09-12T18:45:48",
+  "gerado_em": "2026-09-12T18:57:09",
   "versao": 1,
   "callback_disponivel": true,
   "callback": {
     "dataset": "callback_operview",
-    "gerado_em": "2026-09-12T18:45:48",
+    "gerado_em": "2026-09-12T18:56:14",
     "arquivo_publico": "callback.json.gz",
-    "linhas": 926,
+    "linhas": 930,
     "colunas": [
       "Número",
       "Data Ligação",
@@ -22,30 +22,30 @@
       "Observação",
       "NúmeroAviso"
     ],
-    "fonte": "C:\\Plataforma_Emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Callback\\Exportar Ligações Callback - 10-09-2026 até 12-09-2026_2026-09-12_18-45-45.xlsx",
-    "fonte_nome": "Exportar Ligações Callback - 10-09-2026 até 12-09-2026_2026-09-12_18-45-45.xlsx",
-    "fonte_modificada_em": "2026-09-12T18:45:46",
-    "fonte_sha256": "2c3f03a6db75ed42a99cdfd6cb3dfd759af103364ca6546f8ae10152e93020ce",
-    "tamanho_publico_bytes": 52389
+    "fonte": "C:\\Plataforma_Emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Callback\\Exportar Ligações Callback - 10-09-2026 até 12-09-2026_2026-09-12_18-56-12.xlsx",
+    "fonte_nome": "Exportar Ligações Callback - 10-09-2026 até 12-09-2026_2026-09-12_18-56-12.xlsx",
+    "fonte_modificada_em": "2026-09-12T18:56:12",
+    "fonte_sha256": "35f00ab8067bae806f9e821f0b06be61397c8334074a2ced98126541b11527df",
+    "tamanho_publico_bytes": 52505
   },
   "arquivos": {
     "incidents": {
       "arquivo": "incidents.json.gz",
-      "linhas": 243206,
-      "tamanho_bytes": 26729381,
-      "modificado_em": "2026-09-12T17:57:14"
+      "linhas": 243228,
+      "tamanho_bytes": 26732825,
+      "modificado_em": "2026-09-12T18:57:07"
     },
     "tma": {
       "arquivo": "tma.json.gz",
-      "linhas": 89825,
-      "tamanho_bytes": 4963182,
-      "modificado_em": "2026-09-12T17:57:44"
+      "linhas": 89838,
+      "tamanho_bytes": 4963754,
+      "modificado_em": "2026-09-12T18:58:29"
     },
     "modal": {
       "arquivo": "modal.json.gz",
-      "linhas": 59,
-      "tamanho_bytes": 5170,
-      "modificado_em": "2026-09-12T17:59:55"
+      "linhas": 53,
+      "tamanho_bytes": 4607,
+      "modificado_em": "2026-09-12T18:55:40"
     }
   }
 }
