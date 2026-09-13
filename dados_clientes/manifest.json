@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-09-13T16:24:38",
+  "gerado_em": "2026-09-13T17:06:17",
   "versao": 12,
   "arquivos": {
     "callback": {
@@ -18,22 +18,22 @@
     },
     "reincidencia_principal": {
       "arquivo": "reincidencia_principal.json.gz",
-      "linhas": 243427,
-      "tamanho_bytes": 24722930,
+      "linhas": 243437,
+      "tamanho_bytes": 24724247,
       "fonte": "C:\\Plataforma_Emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Bases_Finais\\Base_Final_Incidencia.parquet",
-      "fonte_modificada_em": "2026-09-13T15:15:54",
-      "linhas_origem": 243427,
-      "linhas_publicadas": 243427,
+      "fonte_modificada_em": "2026-09-13T16:16:30",
+      "linhas_origem": 243437,
+      "linhas_publicadas": 243437,
       "clientes_oficiais": 3734,
       "modo": "universo_completo_denominador",
-      "denominador_elegivel": 104237
+      "denominador_elegivel": 104243
     },
     "reincidencia_oficial": {
       "arquivo": "reincidencia_oficial.json.gz",
       "linhas": 4751,
-      "tamanho_bytes": 524261,
+      "tamanho_bytes": 524260,
       "fonte": "C:\\Plataforma_Emergencia\\Plataforma_Operacional\\runtime\\BUSCA EXECUÇÃO\\plataforma_dados\\Base_Reincidencia_Plataforma.xlsx",
-      "fonte_modificada_em": "2026-09-13T15:24:28",
+      "fonte_modificada_em": "2026-09-13T17:06:15",
       "vinculadas_principal": 4751,
       "sem_vinculo_principal": 0,
       "modo": "oficial_enriquecida"
@@ -45,11 +45,11 @@
       "metodologia": "grupo_causa_contextual_v4_consulta_incidencia_mestre",
       "fonte_mestre": "Base_Final_Incidencia / Consulta Incidência",
       "janela_reincidencia_dias": 30,
-      "linhas_consulta_total": 243427,
-      "linhas_consulta_elegiveis": 104237,
+      "linhas_consulta_total": 243437,
+      "linhas_consulta_elegiveis": 104243,
       "duplicidades_numero_removidas": 0,
-      "origens_identificadas": 78131,
-      "ciclos_identificados": 78131,
+      "origens_identificadas": 78137,
+      "ciclos_identificados": 78137,
       "linhas_antiga": 26106,
       "linhas_nova": 9186,
       "clientes_antiga": 12254,
