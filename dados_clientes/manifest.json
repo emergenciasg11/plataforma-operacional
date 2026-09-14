@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-09-14T17:49:01",
+  "gerado_em": "2026-09-14T18:49:34",
   "versao": 12,
   "arquivos": {
     "callback": {
@@ -11,10 +11,10 @@
     },
     "validacao": {
       "arquivo": "validacao.json.gz",
-      "linhas": 49541,
-      "tamanho_bytes": 8956303,
+      "linhas": 49547,
+      "tamanho_bytes": 8957588,
       "fonte": "C:\\Users\\BR0148272697\\Enel Spa\\BACKUP BASES - General\\Plataforma_Operacional\\runtime\\Auto_Geonline\\processamento_validacao\\saida\\base_validacao_pos_atendimento.xlsx",
-      "fonte_modificada_em": "2026-09-14T17:48:58"
+      "fonte_modificada_em": "2026-09-14T18:49:32"
     },
     "reincidencia_principal": {
       "arquivo": "reincidencia_principal.json.gz",
