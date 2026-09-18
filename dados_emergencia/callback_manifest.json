@@ -1,8 +1,8 @@
 {
   "dataset": "callback_operview",
-  "gerado_em": "2026-09-18T14:33:32",
+  "gerado_em": "2026-09-18T15:20:37",
   "arquivo_publico": "callback.json.gz",
-  "linhas": 855,
+  "linhas": 862,
   "colunas": [
     "Número",
     "Data Ligação",
@@ -18,9 +18,9 @@
     "Observação",
     "NúmeroAviso"
   ],
-  "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Callback\\Exportar Ligações Callback - 16-09-2026 até 18-09-2026_2026-09-18_14-33-25.xlsx",
-  "fonte_nome": "Exportar Ligações Callback - 16-09-2026 até 18-09-2026_2026-09-18_14-33-25.xlsx",
-  "fonte_modificada_em": "2026-09-18T14:33:26",
-  "fonte_sha256": "70ec3850392760f7f460e972219d06ad4ba959c7c7d3a99cbbc7fcc03ff6f5d4",
-  "tamanho_publico_bytes": 47692
+  "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Callback\\Exportar Ligações Callback - 16-09-2026 até 18-09-2026_2026-09-18_15-20-30.xlsx",
+  "fonte_nome": "Exportar Ligações Callback - 16-09-2026 até 18-09-2026_2026-09-18_15-20-30.xlsx",
+  "fonte_modificada_em": "2026-09-18T15:20:31",
+  "fonte_sha256": "32129e63b127d459cbd965a84f7acf935fce3c817d1b9a593794e1eed5e5d3af",
+  "tamanho_publico_bytes": 48270
 }
