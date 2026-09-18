@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-09-18T16:30:26",
+  "gerado_em": "2026-09-18T16:45:14",
   "versao": 12,
   "arquivos": {
     "callback": {
@@ -19,9 +19,9 @@
     "reincidencia_principal": {
       "arquivo": "reincidencia_principal.json.gz",
       "linhas": 245600,
-      "tamanho_bytes": 24989474,
+      "tamanho_bytes": 24989780,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Bases_Finais\\Base_Final_Incidencia.parquet",
-      "fonte_modificada_em": "2026-09-18T15:47:24",
+      "fonte_modificada_em": "2026-09-18T16:53:59",
       "linhas_origem": 245600,
       "linhas_publicadas": 245600,
       "clientes_oficiais": 3734,
@@ -30,18 +30,18 @@
     },
     "reincidencia_oficial": {
       "arquivo": "reincidencia_oficial.json.gz",
-      "linhas": 4809,
-      "tamanho_bytes": 531854,
+      "linhas": 4810,
+      "tamanho_bytes": 532035,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\BUSCA EXECUÇÃO\\plataforma_dados\\Base_Reincidencia_Plataforma.xlsx",
-      "fonte_modificada_em": "2026-09-18T15:48:43",
-      "vinculadas_principal": 4809,
+      "fonte_modificada_em": "2026-09-18T16:44:33",
+      "vinculadas_principal": 4810,
       "sem_vinculo_principal": 0,
       "modo": "oficial_enriquecida"
     },
     "analise_grupo_causa": {
       "arquivo": "analise_grupo_causa.json.gz",
       "linhas": 26460,
-      "tamanho_bytes": 2030024,
+      "tamanho_bytes": 2030098,
       "metodologia": "grupo_causa_contextual_v4_consulta_incidencia_mestre",
       "fonte_mestre": "Base_Final_Incidencia / Consulta Incidência",
       "janela_reincidencia_dias": 30,
@@ -54,8 +54,8 @@
       "linhas_nova": 9299,
       "clientes_antiga": 12387,
       "clientes_nova": 4886,
-      "referencia_base_reincidencia_oficial": 4809,
-      "diferenca_antiga_vs_oficial": 21651,
+      "referencia_base_reincidencia_oficial": 4810,
+      "diferenca_antiga_vs_oficial": 21650,
       "ambiguas_sem_contexto": 109,
       "execucao_arquivos": [
         "base_fevereiro_20260630_182351.xlsx::Execução",
@@ -71,8 +71,8 @@
       ],
       "observacoes_janela_dias": 30,
       "execucao_modo_vinculo": "LEFT JOIN complementar: Consulta.Numero+Equipe = Execucao.Numero da Incidencia+Recurso/Equipe",
-      "execucao_matches": 19915,
-      "execucao_sem_match": 33005,
+      "execucao_matches": 19916,
+      "execucao_sem_match": 33004,
       "execucao_fora_janela_30d": 0,
       "reincidencias_ramal": 2093,
       "reincidencias_medidor": 2122,
