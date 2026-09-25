@@ -698,7 +698,7 @@ const FULL = {"login": 6, "desl": 20};
 const ZERO = {"login": 10, "desl": 30};
 const META_ISOLADO = {"desp_p": 10, "desl_p": 25};
 const DATA_DIA = "25/09/2026";
-const FONTES = {"painel": "Produtividade UO TR - RJ - Painel Acompanhamento.csv", "scanner": "Scanner 4.0 - RJ - Deslocamentos.csv"};
+const FONTES = {"painel": "Produtividade UO TR - RJ - Painel Acompanhamento.csv", "scanner": "__novo__Scanner 4.0 - RJ - Deslocamentos.csv"};
 
 /* ---------- utilitários ---------- */
 const esc = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -1076,7 +1076,7 @@ document.getElementById('p2note').innerHTML =
   'As médias por período são calculadas a partir dos registros válidos do período. O eixo Y de cada gráfico se ajusta ao intervalo dos dados — não parte de zero.';
 
 let _rz; window.addEventListener('resize',()=>{clearTimeout(_rz);_rz=setTimeout(()=>{if(document.getElementById('p2').classList.contains('on'))p2Charts();},180);});
-document.getElementById('navinfo').textContent = 'Gerado em '+"25/09/2026 00:25";
+document.getElementById('navinfo').textContent = 'Gerado em '+"25/09/2026 00:30";
 p1R(); p2R();
 </script>
 </body>
