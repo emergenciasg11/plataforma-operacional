@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-09-29T11:54:39",
+  "gerado_em": "2026-09-29T11:59:54",
   "versao": 12,
   "arquivos": {
     "callback": {
@@ -30,18 +30,18 @@
     },
     "reincidencia_oficial": {
       "arquivo": "reincidencia_oficial.json.gz",
-      "linhas": 4927,
-      "tamanho_bytes": 551516,
+      "linhas": 4928,
+      "tamanho_bytes": 551656,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\BUSCA EXECUÇÃO\\plataforma_dados\\Base_Reincidencia_Plataforma.xlsx",
-      "fonte_modificada_em": "2026-09-29T11:36:13",
-      "vinculadas_principal": 4927,
+      "fonte_modificada_em": "2026-09-29T11:59:45",
+      "vinculadas_principal": 4928,
       "sem_vinculo_principal": 0,
       "modo": "oficial_enriquecida"
     },
     "analise_grupo_causa": {
       "arquivo": "analise_grupo_causa.json.gz",
       "linhas": 26414,
-      "tamanho_bytes": 2052064,
+      "tamanho_bytes": 2052066,
       "metodologia": "grupo_causa_contextual_v4_consulta_incidencia_mestre",
       "fonte_mestre": "Base_Final_Incidencia / Consulta Incidência",
       "janela_reincidencia_dias": 30,
@@ -54,8 +54,8 @@
       "linhas_nova": 9267,
       "clientes_antiga": 12636,
       "clientes_nova": 4969,
-      "referencia_base_reincidencia_oficial": 4927,
-      "diferenca_antiga_vs_oficial": 21487,
+      "referencia_base_reincidencia_oficial": 4928,
+      "diferenca_antiga_vs_oficial": 21486,
       "ambiguas_sem_contexto": 109,
       "execucao_arquivos": [
         "base_fevereiro_20260630_182351.xlsx::Execução",
