@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-09-30T05:40:22",
+  "gerado_em": "2026-09-30T07:26:05",
   "versao": 1,
   "callback_disponivel": true,
   "callback": {
@@ -32,20 +32,20 @@
     "incidents": {
       "arquivo": "incidents.json.gz",
       "linhas": 249541,
-      "tamanho_bytes": 27551600,
+      "tamanho_bytes": 27551597,
       "modificado_em": "2026-09-30T05:06:13"
     },
     "tma": {
       "arquivo": "tma.json.gz",
-      "linhas": 93060,
-      "tamanho_bytes": 5147290,
-      "modificado_em": "2026-09-30T05:02:43"
+      "linhas": 93062,
+      "tamanho_bytes": 5146537,
+      "modificado_em": "2026-09-30T07:26:02"
     },
     "modal": {
       "arquivo": "modal.json.gz",
-      "linhas": 220,
-      "tamanho_bytes": 9949,
-      "modificado_em": "2026-09-30T05:09:24"
+      "linhas": 234,
+      "tamanho_bytes": 12052,
+      "modificado_em": "2026-09-30T07:24:22"
     }
   }
 }
