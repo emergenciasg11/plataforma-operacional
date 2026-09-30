@@ -1,10 +1,10 @@
 {
-  "gerado_em": "2026-09-30T01:45:57",
+  "gerado_em": "2026-09-30T02:01:45",
   "versao": 1,
   "callback_disponivel": true,
   "callback": {
     "dataset": "callback_operview",
-    "gerado_em": "2026-09-30T01:45:57",
+    "gerado_em": "2026-09-30T01:58:02",
     "arquivo_publico": "callback.json.gz",
     "linhas": 485,
     "colunas": [
@@ -22,30 +22,30 @@
       "Observação",
       "NúmeroAviso"
     ],
-    "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Callback\\Exportar Ligações Callback - 28-09-2026 até 30-09-2026_2026-09-30_01-45-54.xlsx",
-    "fonte_nome": "Exportar Ligações Callback - 28-09-2026 até 30-09-2026_2026-09-30_01-45-54.xlsx",
-    "fonte_modificada_em": "2026-09-30T01:45:54",
-    "fonte_sha256": "69c2b445d36dea308e31a65f49e13c67468cf57b9100feca4be779f6a8177ed3",
+    "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Callback\\Exportar Ligações Callback - 28-09-2026 até 30-09-2026_2026-09-30_01-57-59.xlsx",
+    "fonte_nome": "Exportar Ligações Callback - 28-09-2026 até 30-09-2026_2026-09-30_01-57-59.xlsx",
+    "fonte_modificada_em": "2026-09-30T01:57:59",
+    "fonte_sha256": "f356d6fd9ad56a64ddbe14d89dbe64e45d0e145fcbfaad0810d59ecf85d88e2a",
     "tamanho_publico_bytes": 28859
   },
   "arquivos": {
     "incidents": {
       "arquivo": "incidents.json.gz",
       "linhas": 249450,
-      "tamanho_bytes": 27547172,
+      "tamanho_bytes": 27547160,
       "modificado_em": "2026-09-30T01:05:38"
     },
     "tma": {
       "arquivo": "tma.json.gz",
-      "linhas": 93047,
-      "tamanho_bytes": 5145890,
-      "modificado_em": "2026-09-30T01:02:45"
+      "linhas": 93048,
+      "tamanho_bytes": 5142717,
+      "modificado_em": "2026-09-30T02:01:42"
     },
     "modal": {
       "arquivo": "modal.json.gz",
-      "linhas": 192,
-      "tamanho_bytes": 9220,
-      "modificado_em": "2026-09-30T01:04:41"
+      "linhas": 224,
+      "tamanho_bytes": 9651,
+      "modificado_em": "2026-09-30T02:04:13"
     }
   }
 }
