@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-10-02T20:41:28",
+  "gerado_em": "2026-10-02T20:53:56",
   "versao": 12,
   "arquivos": {
     "callback": {
@@ -12,9 +12,9 @@
     "validacao": {
       "arquivo": "validacao.json.gz",
       "linhas": 51326,
-      "tamanho_bytes": 9325807,
+      "tamanho_bytes": 9325934,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\Auto_Geonline\\processamento_validacao\\saida\\base_validacao_pos_atendimento.xlsx",
-      "fonte_modificada_em": "2026-10-02T20:31:13"
+      "fonte_modificada_em": "2026-10-02T20:53:52"
     },
     "reincidencia_principal": {
       "arquivo": "reincidencia_principal.json.gz",
