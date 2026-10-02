@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-10-02T09:25:42",
+  "gerado_em": "2026-10-02T09:32:32",
   "versao": 12,
   "arquivos": {
     "callback": {
@@ -19,7 +19,7 @@
     "reincidencia_principal": {
       "arquivo": "reincidencia_principal.json.gz",
       "linhas": 250909,
-      "tamanho_bytes": 25641143,
+      "tamanho_bytes": 25641149,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Bases_Finais\\Base_Final_Incidencia.parquet",
       "fonte_modificada_em": "2026-10-02T08:43:07",
       "linhas_origem": 250909,
@@ -31,9 +31,9 @@
     "reincidencia_oficial": {
       "arquivo": "reincidencia_oficial.json.gz",
       "linhas": 4935,
-      "tamanho_bytes": 552544,
+      "tamanho_bytes": 552545,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\BUSCA EXECUÇÃO\\plataforma_dados\\Base_Reincidencia_Plataforma.xlsx",
-      "fonte_modificada_em": "2026-10-02T08:44:12",
+      "fonte_modificada_em": "2026-10-02T09:32:29",
       "vinculadas_principal": 4935,
       "sem_vinculo_principal": 0,
       "modo": "oficial_enriquecida"
