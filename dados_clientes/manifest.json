@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-10-05T10:10:19",
+  "gerado_em": "2026-10-05T10:50:41",
   "versao": 12,
   "arquivos": {
     "callback": {
@@ -18,22 +18,22 @@
     },
     "reincidencia_principal": {
       "arquivo": "reincidencia_principal.json.gz",
-      "linhas": 251948,
-      "tamanho_bytes": 25772237,
+      "linhas": 251971,
+      "tamanho_bytes": 25774751,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Bases_Finais\\Base_Final_Incidencia.parquet",
-      "fonte_modificada_em": "2026-10-05T09:53:01",
-      "linhas_origem": 251948,
-      "linhas_publicadas": 251948,
+      "fonte_modificada_em": "2026-10-05T10:39:45",
+      "linhas_origem": 251971,
+      "linhas_publicadas": 251971,
       "clientes_oficiais": 3734,
       "modo": "universo_completo_denominador",
-      "denominador_elegivel": 108940
+      "denominador_elegivel": 108948
     },
     "reincidencia_oficial": {
       "arquivo": "reincidencia_oficial.json.gz",
       "linhas": 4945,
-      "tamanho_bytes": 553914,
+      "tamanho_bytes": 553913,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\BUSCA EXECUÇÃO\\plataforma_dados\\Base_Reincidencia_Plataforma.xlsx",
-      "fonte_modificada_em": "2026-10-05T09:57:18",
+      "fonte_modificada_em": "2026-10-05T10:50:06",
       "vinculadas_principal": 4945,
       "sem_vinculo_principal": 0,
       "modo": "oficial_enriquecida"
@@ -41,15 +41,15 @@
     "analise_grupo_causa": {
       "arquivo": "analise_grupo_causa.json.gz",
       "linhas": 26611,
-      "tamanho_bytes": 2072956,
+      "tamanho_bytes": 2072952,
       "metodologia": "grupo_causa_contextual_v4_consulta_incidencia_mestre",
       "fonte_mestre": "Base_Final_Incidencia / Consulta Incidência",
       "janela_reincidencia_dias": 30,
-      "linhas_consulta_total": 251948,
-      "linhas_consulta_elegiveis": 108038,
+      "linhas_consulta_total": 251971,
+      "linhas_consulta_elegiveis": 108045,
       "duplicidades_numero_removidas": 0,
-      "origens_identificadas": 81427,
-      "ciclos_identificados": 81427,
+      "origens_identificadas": 81434,
+      "ciclos_identificados": 81434,
       "linhas_antiga": 26611,
       "linhas_nova": 9312,
       "clientes_antiga": 12731,
