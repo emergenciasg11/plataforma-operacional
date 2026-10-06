@@ -1,12 +1,12 @@
 {
-  "gerado_em": "2026-10-06T08:23:23",
+  "gerado_em": "2026-10-06T08:44:27",
   "versao": 1,
   "callback_disponivel": true,
   "callback": {
     "dataset": "callback_operview",
-    "gerado_em": "2026-10-06T08:12:18",
+    "gerado_em": "2026-10-06T08:23:59",
     "arquivo_publico": "callback.json.gz",
-    "linhas": 822,
+    "linhas": 834,
     "colunas": [
       "Número",
       "Data Ligação",
@@ -22,30 +22,30 @@
       "Observação",
       "NúmeroAviso"
     ],
-    "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Callback\\Exportar Ligações Callback - 04-10-2026 até 06-10-2026_2026-10-06_08-12-12.xlsx",
-    "fonte_nome": "Exportar Ligações Callback - 04-10-2026 até 06-10-2026_2026-10-06_08-12-12.xlsx",
-    "fonte_modificada_em": "2026-10-06T08:12:12",
-    "fonte_sha256": "6e1463642660607dfebeb8ed34f3c09bd76c44de4fa4fac4a1fff1eff03b2299",
-    "tamanho_publico_bytes": 42676
+    "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Callback\\Exportar Ligações Callback - 04-10-2026 até 06-10-2026_2026-10-06_08-23-34.xlsx",
+    "fonte_nome": "Exportar Ligações Callback - 04-10-2026 até 06-10-2026_2026-10-06_08-23-34.xlsx",
+    "fonte_modificada_em": "2026-10-06T08:23:36",
+    "fonte_sha256": "48f938e8e3caa671fa79dc369658adbcd6e1e1bad1e6359be0c177ff037cfe89",
+    "tamanho_publico_bytes": 43081
   },
   "arquivos": {
     "incidents": {
       "arquivo": "incidents.json.gz",
-      "linhas": 252307,
-      "tamanho_bytes": 27868337,
-      "modificado_em": "2026-10-06T07:20:26"
+      "linhas": 252347,
+      "tamanho_bytes": 27871710,
+      "modificado_em": "2026-10-06T08:44:22"
     },
     "tma": {
       "arquivo": "tma.json.gz",
       "linhas": 94117,
-      "tamanho_bytes": 5203734,
+      "tamanho_bytes": 5203736,
       "modificado_em": "2026-10-06T08:23:15"
     },
     "modal": {
       "arquivo": "modal.json.gz",
-      "linhas": 86,
-      "tamanho_bytes": 7095,
-      "modificado_em": "2026-10-06T08:24:09"
+      "linhas": 83,
+      "tamanho_bytes": 7373,
+      "modificado_em": "2026-10-06T08:45:06"
     }
   }
 }
