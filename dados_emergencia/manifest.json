@@ -1,12 +1,12 @@
 {
-  "gerado_em": "2026-10-09T10:42:55",
+  "gerado_em": "2026-10-09T10:46:48",
   "versao": 1,
   "callback_disponivel": true,
   "callback": {
     "dataset": "callback_operview",
-    "gerado_em": "2026-10-09T10:36:31",
+    "gerado_em": "2026-10-09T10:46:27",
     "arquivo_publico": "callback.json.gz",
-    "linhas": 698,
+    "linhas": 701,
     "colunas": [
       "Número",
       "Data Ligação",
@@ -22,30 +22,30 @@
       "Observação",
       "NúmeroAviso"
     ],
-    "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Callback\\Exportar Ligações Callback - 07-10-2026 até 09-10-2026_2026-10-09_10-36-27.xlsx",
-    "fonte_nome": "Exportar Ligações Callback - 07-10-2026 até 09-10-2026_2026-10-09_10-36-27.xlsx",
-    "fonte_modificada_em": "2026-10-09T10:36:28",
-    "fonte_sha256": "929136f7df932805edf56c9f05889f537ac5b0793cb9de4b265d64582d5c3f49",
-    "tamanho_publico_bytes": 39333
+    "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Callback\\Exportar Ligações Callback - 07-10-2026 até 09-10-2026_2026-10-09_10-46-23.xlsx",
+    "fonte_nome": "Exportar Ligações Callback - 07-10-2026 até 09-10-2026_2026-10-09_10-46-23.xlsx",
+    "fonte_modificada_em": "2026-10-09T10:46:23",
+    "fonte_sha256": "c56fdcf6a6213fc17ef16d873045631628d948f679d3f66ebf8757ddb6872ba3",
+    "tamanho_publico_bytes": 39663
   },
   "arquivos": {
     "incidents": {
       "arquivo": "incidents.json.gz",
-      "linhas": 253389,
-      "tamanho_bytes": 28000604,
+      "linhas": 253405,
+      "tamanho_bytes": 28002581,
       "modificado_em": "2026-10-09T10:45:04"
     },
     "tma": {
       "arquivo": "tma.json.gz",
       "linhas": 94672,
-      "tamanho_bytes": 5234813,
+      "tamanho_bytes": 5234815,
       "modificado_em": "2026-10-09T10:42:53"
     },
     "modal": {
       "arquivo": "modal.json.gz",
       "linhas": 49,
-      "tamanho_bytes": 3748,
-      "modificado_em": "2026-10-09T10:41:02"
+      "tamanho_bytes": 3669,
+      "modificado_em": "2026-10-09T10:48:26"
     }
   }
 }
