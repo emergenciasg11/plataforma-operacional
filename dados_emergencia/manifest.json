@@ -1,12 +1,12 @@
 {
-  "gerado_em": "2026-10-13T10:17:06",
+  "gerado_em": "2026-10-13T10:21:25",
   "versao": 1,
   "callback_disponivel": true,
   "callback": {
     "dataset": "callback_operview",
-    "gerado_em": "2026-10-13T10:11:33",
+    "gerado_em": "2026-10-13T10:21:18",
     "arquivo_publico": "callback.json.gz",
-    "linhas": 389,
+    "linhas": 392,
     "colunas": [
       "Número",
       "Data Ligação",
@@ -22,30 +22,30 @@
       "Observação",
       "NúmeroAviso"
     ],
-    "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Callback\\Exportar Ligações Callback - 11-10-2026 até 13-10-2026_2026-10-13_10-11-30.xlsx",
-    "fonte_nome": "Exportar Ligações Callback - 11-10-2026 até 13-10-2026_2026-10-13_10-11-30.xlsx",
-    "fonte_modificada_em": "2026-10-13T10:11:31",
-    "fonte_sha256": "9a328a25ff91501ae406b027d7a84dc6db96f9fb5360d70ddd1a231ff7c5ad27",
-    "tamanho_publico_bytes": 19810
+    "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Callback\\Exportar Ligações Callback - 11-10-2026 até 13-10-2026_2026-10-13_10-21-00.xlsx",
+    "fonte_nome": "Exportar Ligações Callback - 11-10-2026 até 13-10-2026_2026-10-13_10-21-00.xlsx",
+    "fonte_modificada_em": "2026-10-13T10:21:01",
+    "fonte_sha256": "cfe4c51124640ff144dcbaeced81b6ea7413491a718d0452008cc005e1e891ae",
+    "tamanho_publico_bytes": 19975
   },
   "arquivos": {
     "incidents": {
       "arquivo": "incidents.json.gz",
       "linhas": 254307,
-      "tamanho_bytes": 28113737,
+      "tamanho_bytes": 28113735,
       "modificado_em": "2026-10-13T10:17:01"
     },
     "tma": {
       "arquivo": "tma.json.gz",
       "linhas": 95172,
-      "tamanho_bytes": 5262899,
+      "tamanho_bytes": 5262900,
       "modificado_em": "2026-10-13T10:18:23"
     },
     "modal": {
       "arquivo": "modal.json.gz",
       "linhas": 23,
-      "tamanho_bytes": 2271,
-      "modificado_em": "2026-10-13T10:13:12"
+      "tamanho_bytes": 2298,
+      "modificado_em": "2026-10-13T10:22:49"
     }
   }
 }
