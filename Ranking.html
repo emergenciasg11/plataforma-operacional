@@ -3380,6 +3380,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   const allTipos=[...new Set(RAW.map(r=>r.tipo||'Sem Tipo'))].sort();
   const allTiposFinal=allTipos.length?allTipos:['Pesado','Leve','Tracionado'];
   const allTipoEqs=(()=>{const v=[...new Set(RAW.map(r=>r.tipo_eq).filter(Boolean))].sort();return v.length?v:['Operação','Extra'];})();
+  const TIPO_EQ_PADRAO=allTipoEqs.filter(v=>v!=='Perdas');
   function _inSel(vals,val){return Array.isArray(vals)&&vals.length>0&&vals.includes(String(val||''));}
   const _normTxt=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
   function defaultBaseSelection(){
@@ -3610,42 +3611,42 @@ document.addEventListener('DOMContentLoaded',()=>{
   setMultiOptions('ftms',allTurnos,allTurnos,p1R);
   setMultiOptions('fems',allEmps,allEmps,p1R);
   setMultiOptions('fvms',allTiposFinal,allTiposFinal,p1R);
-  setMultiOptions('fteqms',allTipoEqs,allTipoEqs,p1R);
+  setMultiOptions('fteqms',allTipoEqs,TIPO_EQ_PADRAO,p1R);
   setMultiOptions('fdesems',DESEMPENHO_OPTS,DESEMPENHO_OPTS,p1R);
   refreshP1DateOptions();
   setMultiOptions('p2basems',allBases,BASE_PRESET,()=>p2R(true));
   setMultiOptions('p2tms',allTurnos,allTurnos,()=>p2R(true));
   setMultiOptions('p2ems',allEmps,allEmps,()=>p2R(true));
   setMultiOptions('p2vms',allTiposFinal,allTiposFinal,()=>p2R(true));
-  setMultiOptions('p2teqms',allTipoEqs,allTipoEqs,()=>p2R(true));
+  setMultiOptions('p2teqms',allTipoEqs,TIPO_EQ_PADRAO,()=>p2R(true));
   setMultiOptions('p2desems',DESEMPENHO_OPTS,DESEMPENHO_OPTS,()=>p2R(true));
   setMultiOptions('p2indicms',P2_TABLE_METRIC_LABELS,P2_TABLE_METRIC_LABELS,()=>p2R(false));
   setMultiOptions('p3basems',allBases,BASE_PRESET,p3R);
   setMultiOptions('p3turnoms',allTurnos,allTurnos,p3R);
   setMultiOptions('p3ems',allEmps,allEmps,p3R);
   setMultiOptions('p3vms',allTiposFinal,allTiposFinal,p3R);
-  setMultiOptions('p3teqms',allTipoEqs,allTipoEqs,p3R);
+  setMultiOptions('p3teqms',allTipoEqs,TIPO_EQ_PADRAO,p3R);
   setMultiOptions('p4basems',allBases,BASE_PRESET,p4R);
   setMultiOptions('p4tms',allTurnos,allTurnos,p4R);
   setMultiOptions('p4ems',allEmps,allEmps,p4R);
   setMultiOptions('p4vms',allTiposFinal,allTiposFinal,p4R);
-  setMultiOptions('p4teqms',allTipoEqs,allTipoEqs,p4R);
+  setMultiOptions('p4teqms',allTipoEqs,TIPO_EQ_PADRAO,p4R);
   setMultiOptions('fqms',allEqs,allEqs,p1R);
   setMultiOptions('p4eqms',allEqs,[],p4R);
   setMultiOptions('p5tms',allTurnos,allTurnos,p5R);
   setMultiOptions('p5ems',allEmps,allEmps,p5R);
   setMultiOptions('p5vms',allTiposFinal,allTiposFinal,p5R);
-  setMultiOptions('p5teqms',allTipoEqs,allTipoEqs,p5R);
+  setMultiOptions('p5teqms',allTipoEqs,TIPO_EQ_PADRAO,p5R);
   setMultiOptions('p5focusms',allBases,[],p5R);
   setMultiOptions('p6basems',allBases,BASE_PRESET,p6R);
   setMultiOptions('p6empms',allEmps,allEmps,p6R);
-  setMultiOptions('p6teqms',allTipoEqs,allTipoEqs,p6R);
+  setMultiOptions('p6teqms',allTipoEqs,TIPO_EQ_PADRAO,p6R);
   setMultiOptions('p6eqms',allEqs,allEqs,p6R);
   setMultiOptions('p8basems',allBases,BASE_PRESET,()=>p8R(true));
   setMultiOptions('p8tms',allTurnos,allTurnos,()=>p8R(true));
   setMultiOptions('p8ems',allEmps,allEmps,()=>p8R(true));
   setMultiOptions('p8vms',allTiposFinal,allTiposFinal,()=>p8R(true));
-  setMultiOptions('p8teqms',allTipoEqs,allTipoEqs,()=>p8R(true));
+  setMultiOptions('p8teqms',allTipoEqs,TIPO_EQ_PADRAO,()=>p8R(true));
   setMultiOptions('p8eqms',allEqs,allEqs,p8R);
   setMultiOptions('p8desems',DESEMPENHO_OPTS,DESEMPENHO_OPTS,p8R);
 
@@ -3667,7 +3668,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   setMultiOptions('p9tms',allTurnos,allTurnos,p9R);
   setMultiOptions('p9ems',allEmps,allEmps,p9R);
   setMultiOptions('p9vms',allTiposFinal,allTiposFinal,p9R);
-  setMultiOptions('p9teqms',allTipoEqs,allTipoEqs,p9R);
+  setMultiOptions('p9teqms',allTipoEqs,TIPO_EQ_PADRAO,p9R);
   setMultiOptions('p9desems',DESEMPENHO_OPTS,DESEMPENHO_OPTS,p9R);
   setMultiOptions('p9eqms',allEqs,allEqs,p9R);
 
@@ -3675,27 +3676,27 @@ document.addEventListener('DOMContentLoaded',()=>{
   setMultiOptions('p10tms',allTurnos,allTurnos,p10R);
   setMultiOptions('p10ems',allEmps,allEmps,p10R);
   setMultiOptions('p10vms',allTiposFinal,allTiposFinal,p10R);
-  setMultiOptions('p10teqms',allTipoEqs,allTipoEqs,p10R);
+  setMultiOptions('p10teqms',allTipoEqs,TIPO_EQ_PADRAO,p10R);
   setMultiOptions('p10desems',DESEMPENHO_OPTS,DESEMPENHO_OPTS,p10R);
   setMultiOptions('p10indicms',P2_TABLE_METRIC_LABELS,P2_TABLE_METRIC_LABELS,p10R);
   setMultiOptions('p10eqms',allEqs,allEqs,p10R);
   setMultiOptions('p11basems',allBases,(typeof BASE_PRESET!=='undefined'?BASE_PRESET:allBases),p11R);
   setMultiOptions('p11tms',allTurnos,allTurnos,p11R);
   setMultiOptions('p11ems',allEmps,allEmps,p11R);
-  setMultiOptions('p11teqms',allTipoEqs,allTipoEqs,p11R);
+  setMultiOptions('p11teqms',allTipoEqs,TIPO_EQ_PADRAO,p11R);
   setMultiOptions('p11eqms',allEqs,allEqs,p11R);
   setMultiOptions('p12basems',allBases,BASE_PRESET,()=>p12R(false));
   setMultiOptions('p12tms',allTurnos,allTurnos,()=>p12R(false));
   setMultiOptions('p12ems',allEmps,allEmps,()=>p12R(false));
   setMultiOptions('p12vms',allTiposFinal,allTiposFinal,()=>p12R(false));
-  setMultiOptions('p12teqms',allTipoEqs,allTipoEqs,()=>p12R(false));
+  setMultiOptions('p12teqms',allTipoEqs,TIPO_EQ_PADRAO,()=>p12R(false));
   setMultiOptions('p12statusms',['Produtiva','Improdutiva'],['Produtiva','Improdutiva'],()=>p12R(false));
   setMultiOptions('p12eqms',allEqs,allEqs,()=>p12R(true));
   setMultiOptions('p13basems',allBases,BASE_PRESET,()=>p13R(false));
   setMultiOptions('p13tms',allTurnos,allTurnos,()=>p13R(false));
   setMultiOptions('p13ems',allEmps,allEmps,()=>p13R(false));
   setMultiOptions('p13vms',allTiposFinal,allTiposFinal,()=>p13R(false));
-  setMultiOptions('p13teqms',allTipoEqs,allTipoEqs,()=>p13R(false));
+  setMultiOptions('p13teqms',allTipoEqs,TIPO_EQ_PADRAO,()=>p13R(false));
   setMultiOptions('p13desems',DESEMPENHO_OPTS,DESEMPENHO_OPTS,()=>p13R(false));
   setMultiOptions('p13indicms',['Classificação / Score','Eficiência','Utilização','Task Time','Ativ/Equipe/Dia','1º Login','1º Despacho','1º Deslocamento','Retorno à Base','TMR Secundário','TMR Improdutivo','TML','Improdutivos/dia','Reincidentes/dia','Ordem 2/dia'],['Classificação / Score','Eficiência','Utilização','Task Time','Ativ/Equipe/Dia','1º Login','1º Despacho','1º Deslocamento','Retorno à Base','TMR Secundário','TMR Improdutivo','TML','Improdutivos/dia','Reincidentes/dia','Ordem 2/dia'],()=>p13R(true));
   setMultiOptions('p13eqms',allEqs,allEqs,()=>p13R(true));
@@ -6705,7 +6706,7 @@ function mkP9TrendChart(id,xlabels,values,yLbl,metaVal,metricKey){
     setMultiOptions('p4tms',allTurnos,allTurnos,()=>p4R(true));
     setMultiOptions('p4ems',allEmps,allEmps,()=>p4R(true));
     setMultiOptions('p4vms',allTiposFinal,allTiposFinal,()=>p4R(true));
-    setMultiOptions('p4teqms',allTipoEqs,allTipoEqs,()=>p4R(true));
+    setMultiOptions('p4teqms',allTipoEqs,TIPO_EQ_PADRAO,()=>p4R(true));
     setMultiOptions('p4eqms',allEqs,allEqs,()=>p4R(true));
     setMultiOptions('p4desems',DESEMPENHO_OPTS,DESEMPENHO_OPTS,()=>p4R(true));
     ['p4a_i','p4a_f','p4b_i','p4b_f'].forEach(id=>document.getElementById(id)?.addEventListener('change',()=>p4R(true)));
@@ -7177,6 +7178,7 @@ function tlTipoEquipeFromEq(eq){
     const c=s.charAt(s.length-4);
     if(c==='O')return 'Operação';
     if(c==='X')return 'Extra';
+    if(c==='P')return 'Perdas';
   }
 
   // Fallback específico da Timeline: alguns prefixos do Scanner aparecem encurtados,
