@@ -406,6 +406,7 @@ function tlTipo(r){
   const c=s.length>=7?s.charAt(6):'';
   if(c==='X')return 'Extra';
   if(c==='O')return 'Operação';
+  if(c==='P')return 'Perdas'; // V_PERDAS: SG102LPE-B / SG231PPE-B
   return null;
 }
 function tlPref(r){return String(r.eq||'').slice(0,2);}
