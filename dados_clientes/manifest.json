@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-10-23T13:39:16",
+  "gerado_em": "2026-10-23T14:29:03",
   "versao": 12,
   "arquivos": {
     "callback": {
@@ -18,12 +18,12 @@
     },
     "reincidencia_principal": {
       "arquivo": "reincidencia_principal.json.gz",
-      "linhas": 257810,
-      "tamanho_bytes": 26504468,
+      "linhas": 257813,
+      "tamanho_bytes": 26504840,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Bases_Finais\\Base_Final_Incidencia.parquet",
-      "fonte_modificada_em": "2026-10-23T13:16:41",
-      "linhas_origem": 257810,
-      "linhas_publicadas": 257810,
+      "fonte_modificada_em": "2026-10-23T14:17:11",
+      "linhas_origem": 257813,
+      "linhas_publicadas": 257813,
       "clientes_oficiais": 3734,
       "modo": "universo_completo_denominador",
       "denominador_elegivel": 112411
@@ -31,9 +31,9 @@
     "reincidencia_oficial": {
       "arquivo": "reincidencia_oficial.json.gz",
       "linhas": 5065,
-      "tamanho_bytes": 568686,
+      "tamanho_bytes": 568688,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\BUSCA EXECUÇÃO\\plataforma_dados\\Base_Reincidencia_Plataforma.xlsx",
-      "fonte_modificada_em": "2026-10-23T13:24:50",
+      "fonte_modificada_em": "2026-10-23T14:28:52",
       "vinculadas_principal": 5065,
       "sem_vinculo_principal": 0,
       "modo": "oficial_enriquecida"
@@ -41,11 +41,11 @@
     "analise_grupo_causa": {
       "arquivo": "analise_grupo_causa.json.gz",
       "linhas": 27247,
-      "tamanho_bytes": 2147596,
+      "tamanho_bytes": 2147593,
       "metodologia": "grupo_causa_contextual_v4_consulta_incidencia_mestre",
       "fonte_mestre": "Base_Final_Incidencia / Consulta Incidência",
       "janela_reincidencia_dias": 30,
-      "linhas_consulta_total": 257810,
+      "linhas_consulta_total": 257813,
       "linhas_consulta_elegiveis": 111029,
       "duplicidades_numero_removidas": 0,
       "origens_identificadas": 83782,
