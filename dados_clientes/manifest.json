@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-10-27T08:26:15",
+  "gerado_em": "2026-10-27T08:31:06",
   "versao": 12,
   "arquivos": {
     "callback": {
@@ -19,9 +19,9 @@
     "reincidencia_principal": {
       "arquivo": "reincidencia_principal.json.gz",
       "linhas": 259051,
-      "tamanho_bytes": 26657841,
+      "tamanho_bytes": 26657833,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Bases_Finais\\Base_Final_Incidencia.parquet",
-      "fonte_modificada_em": "2026-10-27T07:40:22",
+      "fonte_modificada_em": "2026-10-27T08:32:51",
       "linhas_origem": 259051,
       "linhas_publicadas": 259051,
       "clientes_oficiais": 3734,
@@ -31,9 +31,9 @@
     "reincidencia_oficial": {
       "arquivo": "reincidencia_oficial.json.gz",
       "linhas": 5097,
-      "tamanho_bytes": 572848,
+      "tamanho_bytes": 572849,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\BUSCA EXECUÇÃO\\plataforma_dados\\Base_Reincidencia_Plataforma.xlsx",
-      "fonte_modificada_em": "2026-10-27T07:44:33",
+      "fonte_modificada_em": "2026-10-27T08:26:55",
       "vinculadas_principal": 5097,
       "sem_vinculo_principal": 0,
       "modo": "oficial_enriquecida"
@@ -41,7 +41,7 @@
     "analise_grupo_causa": {
       "arquivo": "analise_grupo_causa.json.gz",
       "linhas": 27386,
-      "tamanho_bytes": 2163075,
+      "tamanho_bytes": 2163076,
       "metodologia": "grupo_causa_contextual_v4_consulta_incidencia_mestre",
       "fonte_mestre": "Base_Final_Incidencia / Consulta Incidência",
       "janela_reincidencia_dias": 30,
