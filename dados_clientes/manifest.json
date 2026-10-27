@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-10-27T15:11:29",
+  "gerado_em": "2026-10-27T15:52:10",
   "versao": 12,
   "arquivos": {
     "callback": {
@@ -19,9 +19,9 @@
     "reincidencia_principal": {
       "arquivo": "reincidencia_principal.json.gz",
       "linhas": 259187,
-      "tamanho_bytes": 26675601,
+      "tamanho_bytes": 26675720,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Bases_Finais\\Base_Final_Incidencia.parquet",
-      "fonte_modificada_em": "2026-10-27T14:54:53",
+      "fonte_modificada_em": "2026-10-27T16:00:26",
       "linhas_origem": 259187,
       "linhas_publicadas": 259187,
       "clientes_oficiais": 3734,
@@ -31,9 +31,9 @@
     "reincidencia_oficial": {
       "arquivo": "reincidencia_oficial.json.gz",
       "linhas": 5102,
-      "tamanho_bytes": 573328,
+      "tamanho_bytes": 573326,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\BUSCA EXECUÇÃO\\plataforma_dados\\Base_Reincidencia_Plataforma.xlsx",
-      "fonte_modificada_em": "2026-10-27T14:54:01",
+      "fonte_modificada_em": "2026-10-27T15:51:58",
       "vinculadas_principal": 5102,
       "sem_vinculo_principal": 0,
       "modo": "oficial_enriquecida"
@@ -41,7 +41,7 @@
     "analise_grupo_causa": {
       "arquivo": "analise_grupo_causa.json.gz",
       "linhas": 27404,
-      "tamanho_bytes": 2164599,
+      "tamanho_bytes": 2164699,
       "metodologia": "grupo_causa_contextual_v4_consulta_incidencia_mestre",
       "fonte_mestre": "Base_Final_Incidencia / Consulta Incidência",
       "janela_reincidencia_dias": 30,
@@ -72,8 +72,8 @@
       ],
       "observacoes_janela_dias": 30,
       "execucao_modo_vinculo": "LEFT JOIN complementar: Consulta.Numero+Equipe = Execucao.Numero da Incidencia+Recurso/Equipe",
-      "execucao_matches": 21659,
-      "execucao_sem_match": 33149,
+      "execucao_matches": 21660,
+      "execucao_sem_match": 33148,
       "execucao_fora_janela_30d": 0,
       "reincidencias_ramal": 2240,
       "reincidencias_medidor": 2196,
