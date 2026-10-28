@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-10-28T08:17:03",
+  "gerado_em": "2026-10-28T08:38:51",
   "versao": 12,
   "arquivos": {
     "callback": {
@@ -18,34 +18,34 @@
     },
     "reincidencia_principal": {
       "arquivo": "reincidencia_principal.json.gz",
-      "linhas": 259370,
-      "tamanho_bytes": 26700099,
+      "linhas": 259371,
+      "tamanho_bytes": 26700199,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Bases_Finais\\Base_Final_Incidencia.parquet",
       "fonte_modificada_em": "2026-10-28T07:54:38",
-      "linhas_origem": 259370,
-      "linhas_publicadas": 259370,
+      "linhas_origem": 259371,
+      "linhas_publicadas": 259371,
       "clientes_oficiais": 3734,
       "modo": "universo_completo_denominador",
       "denominador_elegivel": 113477
     },
     "reincidencia_oficial": {
       "arquivo": "reincidencia_oficial.json.gz",
-      "linhas": 5111,
-      "tamanho_bytes": 574549,
+      "linhas": 5112,
+      "tamanho_bytes": 574814,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\BUSCA EXECUÇÃO\\plataforma_dados\\Base_Reincidencia_Plataforma.xlsx",
-      "fonte_modificada_em": "2026-10-28T07:48:19",
-      "vinculadas_principal": 5111,
+      "fonte_modificada_em": "2026-10-28T08:38:40",
+      "vinculadas_principal": 5112,
       "sem_vinculo_principal": 0,
       "modo": "oficial_enriquecida"
     },
     "analise_grupo_causa": {
       "arquivo": "analise_grupo_causa.json.gz",
       "linhas": 27435,
-      "tamanho_bytes": 2167965,
+      "tamanho_bytes": 2167972,
       "metodologia": "grupo_causa_contextual_v4_consulta_incidencia_mestre",
       "fonte_mestre": "Base_Final_Incidencia / Consulta Incidência",
       "janela_reincidencia_dias": 30,
-      "linhas_consulta_total": 259370,
+      "linhas_consulta_total": 259371,
       "linhas_consulta_elegiveis": 111917,
       "duplicidades_numero_removidas": 0,
       "origens_identificadas": 84482,
@@ -54,8 +54,8 @@
       "linhas_nova": 9519,
       "clientes_antiga": 13222,
       "clientes_nova": 5154,
-      "referencia_base_reincidencia_oficial": 5111,
-      "diferenca_antiga_vs_oficial": 22324,
+      "referencia_base_reincidencia_oficial": 5112,
+      "diferenca_antiga_vs_oficial": 22323,
       "ambiguas_sem_contexto": 110,
       "execucao_arquivos": [
         "base_fevereiro_20260630_182351.xlsx::Execução",
