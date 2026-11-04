@@ -322,6 +322,17 @@ function tlSnapshotFiltros(){
 function tlIntersecaoDisponivel(valores,disponiveis){
   const set=new Set(disponiveis);return (valores||[]).filter(v=>set.has(v));
 }
+/* V_FILTRO_RECARGA: ao chegar nova carga, se o filtro estava em "Todas"
+   (ou a carga anterior veio vazia), volta a marcar TODOS os valores
+   disponíveis — inclusive tipos/bases que reapareceram (ex.: Operação). */
+let TL_PREV_TIPOS=[], TL_PREV_BASES=[];
+function tlSelRecarga(snapSel,prev,atuais){
+  if(!snapSel)return atuais;
+  if(!prev.length||prev.every(v=>snapSel.includes(v)))return atuais;
+  if(snapSel.length===0)return [];
+  const inter=tlIntersecaoDisponivel(snapSel,atuais);
+  return inter.length?inter:atuais;
+}
 async function tlWakeLock(on){
   try{
     if(on && 'wakeLock' in navigator){
@@ -427,8 +438,13 @@ function tlBaseFiltrada(){
 function tlRebuildEq(){
   const eqs=[...new Set(tlBaseFiltrada().map(r=>r.eq))].sort();
   const root=document.getElementById('tlEqms');
-  const prev=msGet('tlEqms').filter(e=>eqs.includes(e));
-  const sel=(root.dataset.init==='1')?(root.dataset.cleared==='1'?[]:(prev.length?prev:eqs)):eqs;
+  // V_FILTRO_RECARGA: se o filtro Equipe estava em "Todas", continua em "Todas"
+  // quando novas equipes aparecem (ex.: ao remarcar Operação no Tipo Equipe).
+  const prevSel=msGet('tlEqms');
+  const prevDisp=[...root.querySelectorAll('.ms-opt')].map(o=>o.value);
+  const eraTodas=prevDisp.length>0&&prevDisp.every(e=>prevSel.includes(e));
+  const prev=prevSel.filter(e=>eqs.includes(e));
+  const sel=(root.dataset.init==='1')?(root.dataset.cleared==='1'?[]:((eraTodas||!prev.length)?eqs:prev)):eqs;
   msSet('tlEqms',eqs,sel,tlApply);
 }
 function tlApply(){
@@ -595,11 +611,12 @@ function tlInit(preservar=true){
   const prefs=[...new Set(TL_DATA.map(tlPref))].filter(Boolean).sort();
 
   msSet('tlPerms',pers,pers,()=>tlAplicarPeriodoAutomatico(true));
-  const selTipos=snap?tlIntersecaoDisponivel(snap.tipo,tipos):tipos;
-  const selBases=snap?tlIntersecaoDisponivel(snap.base,prefs):prefs;
+  const selTipos=tlSelRecarga(snap?snap.tipo:null,TL_PREV_TIPOS,tipos);
+  const selBases=tlSelRecarga(snap?snap.base:null,TL_PREV_BASES,prefs);
   const selAtiv=snap?tlIntersecaoDisponivel(snap.atividade,TL_ATIVS):TL_ATIVS;
-  msSet('tlTipoms',tipos,(snap&&snap.tipo.length===0)?[]:(selTipos.length?selTipos:tipos),tlOnFiltroTopo);
-  msSet('tlBasems',prefs,(snap&&snap.base.length===0)?[]:(selBases.length?selBases:prefs),tlOnFiltroTopo);
+  msSet('tlTipoms',tipos,selTipos,tlOnFiltroTopo);
+  msSet('tlBasems',prefs,selBases,tlOnFiltroTopo);
+  TL_PREV_TIPOS=tipos; TL_PREV_BASES=prefs;
   msSet('tlAtivms',TL_ATIVS,(snap&&snap.atividade.length===0)?[]:(selAtiv.length?selAtiv:TL_ATIVS),tlApply);
 
   if(!TL_INITIALIZED){
