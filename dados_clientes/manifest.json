@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-10-28T14:22:58",
+  "gerado_em": "2026-11-04T11:43:09",
   "versao": 12,
   "arquivos": {
     "callback": {
@@ -11,51 +11,51 @@
     },
     "validacao": {
       "arquivo": "validacao.json.gz",
-      "linhas": 53525,
-      "tamanho_bytes": 9807931,
+      "linhas": 53966,
+      "tamanho_bytes": 9847657,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\Auto_Geonline\\processamento_validacao\\saida\\base_validacao_pos_atendimento.xlsx",
-      "fonte_modificada_em": "2026-10-28T08:39:25"
+      "fonte_modificada_em": "2026-11-04T08:56:07"
     },
     "reincidencia_principal": {
       "arquivo": "reincidencia_principal.json.gz",
-      "linhas": 259476,
-      "tamanho_bytes": 26710554,
+      "linhas": 260811,
+      "tamanho_bytes": 26875600,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Bases_Finais\\Base_Final_Incidencia.parquet",
-      "fonte_modificada_em": "2026-10-28T14:14:30",
-      "linhas_origem": 259476,
-      "linhas_publicadas": 259476,
+      "fonte_modificada_em": "2026-11-04T11:35:35",
+      "linhas_origem": 260811,
+      "linhas_publicadas": 260811,
       "clientes_oficiais": 3734,
       "modo": "universo_completo_denominador",
-      "denominador_elegivel": 113546
+      "denominador_elegivel": 114512
     },
     "reincidencia_oficial": {
       "arquivo": "reincidencia_oficial.json.gz",
-      "linhas": 5114,
-      "tamanho_bytes": 575123,
+      "linhas": 5130,
+      "tamanho_bytes": 576774,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\BUSCA EXECUÇÃO\\plataforma_dados\\Base_Reincidencia_Plataforma.xlsx",
-      "fonte_modificada_em": "2026-10-28T14:14:36",
-      "vinculadas_principal": 5114,
+      "fonte_modificada_em": "2026-11-04T11:42:55",
+      "vinculadas_principal": 5130,
       "sem_vinculo_principal": 0,
       "modo": "oficial_enriquecida"
     },
     "analise_grupo_causa": {
       "arquivo": "analise_grupo_causa.json.gz",
-      "linhas": 27450,
-      "tamanho_bytes": 2169601,
+      "linhas": 27581,
+      "tamanho_bytes": 2185454,
       "metodologia": "grupo_causa_contextual_v4_consulta_incidencia_mestre",
       "fonte_mestre": "Base_Final_Incidencia / Consulta Incidência",
       "janela_reincidencia_dias": 30,
-      "linhas_consulta_total": 259476,
-      "linhas_consulta_elegiveis": 111961,
+      "linhas_consulta_total": 260811,
+      "linhas_consulta_elegiveis": 112689,
       "duplicidades_numero_removidas": 0,
-      "origens_identificadas": 84511,
-      "ciclos_identificados": 84511,
-      "linhas_antiga": 27450,
-      "linhas_nova": 9523,
-      "clientes_antiga": 13231,
-      "clientes_nova": 5157,
-      "referencia_base_reincidencia_oficial": 5114,
-      "diferenca_antiga_vs_oficial": 22336,
+      "origens_identificadas": 85108,
+      "ciclos_identificados": 85108,
+      "linhas_antiga": 27581,
+      "linhas_nova": 9562,
+      "clientes_antiga": 13305,
+      "clientes_nova": 5186,
+      "referencia_base_reincidencia_oficial": 5130,
+      "diferenca_antiga_vs_oficial": 22451,
       "ambiguas_sem_contexto": 110,
       "execucao_arquivos": [
         "base_fevereiro_20260630_182351.xlsx::Execução",
@@ -68,17 +68,18 @@
         "Produt_Resultado_Mes_2026-09_NOVO.xlsx::Execução",
         "Produt_Resultado_Mes_2026_08_20260901_153823.xlsx::Execução",
         "Produt_Resultado_Mes_2026-09.xlsx::Execução",
-        "Produt_Resultado_Mes_2026-10.xlsx::Execução"
+        "Produt_Resultado_Mes_2026-10.xlsx::Execução",
+        "Produt_Resultado_Mes_2026-11.xlsx::Execução"
       ],
       "observacoes_janela_dias": 30,
       "execucao_modo_vinculo": "LEFT JOIN complementar: Consulta.Numero+Equipe = Execucao.Numero da Incidencia+Recurso/Equipe",
-      "execucao_matches": 21720,
-      "execucao_sem_match": 33180,
+      "execucao_matches": 21916,
+      "execucao_sem_match": 33246,
       "execucao_fora_janela_30d": 0,
-      "reincidencias_ramal": 2243,
-      "reincidencias_medidor": 2200,
-      "reincidencias_vegetacao": 547,
-      "reincidencias_animais": 10
+      "reincidencias_ramal": 2257,
+      "reincidencias_medidor": 2209,
+      "reincidencias_vegetacao": 549,
+      "reincidencias_animais": 11
     }
   },
   "erros": {}
