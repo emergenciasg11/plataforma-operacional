@@ -1,12 +1,12 @@
 {
-  "gerado_em": "2026-11-05T10:44:18",
+  "gerado_em": "2026-11-05T10:59:32",
   "versao": 1,
   "callback_disponivel": true,
   "callback": {
     "dataset": "callback_operview",
-    "gerado_em": "2026-11-05T10:24:44",
+    "gerado_em": "2026-11-05T10:52:22",
     "arquivo_publico": "callback.json.gz",
-    "linhas": 787,
+    "linhas": 802,
     "colunas": [
       "Número",
       "Data Ligação",
@@ -22,18 +22,18 @@
       "Observação",
       "NúmeroAviso"
     ],
-    "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Callback\\Exportar Ligações Callback - 03-11-2026 até 05-11-2026_2026-11-05_10-23-56.xlsx",
-    "fonte_nome": "Exportar Ligações Callback - 03-11-2026 até 05-11-2026_2026-11-05_10-23-56.xlsx",
-    "fonte_modificada_em": "2026-11-05T10:23:58",
-    "fonte_sha256": "e39c357ca448a54dc01b4a51fa54005baf5026037d8b0d660c4f729daed4cad1",
-    "tamanho_publico_bytes": 45904
+    "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Callback\\Exportar Ligações Callback - 03-11-2026 até 05-11-2026_2026-11-05_10-52-03.xlsx",
+    "fonte_nome": "Exportar Ligações Callback - 03-11-2026 até 05-11-2026_2026-11-05_10-52-03.xlsx",
+    "fonte_modificada_em": "2026-11-05T10:52:04",
+    "fonte_sha256": "4cb6434a6420805507eaed45af9a3988474859b87f647185cd4a3f954767e41e",
+    "tamanho_publico_bytes": 46948
   },
   "arquivos": {
     "incidents": {
       "arquivo": "incidents.json.gz",
-      "linhas": 261221,
-      "tamanho_bytes": 28970773,
-      "modificado_em": "2026-11-05T09:56:52"
+      "linhas": 261245,
+      "tamanho_bytes": 28973364,
+      "modificado_em": "2026-11-05T10:58:47"
     },
     "tma": {
       "arquivo": "tma.json.gz",
@@ -43,9 +43,9 @@
     },
     "modal": {
       "arquivo": "modal.json.gz",
-      "linhas": 48,
-      "tamanho_bytes": 3882,
-      "modificado_em": "2026-11-05T10:48:21"
+      "linhas": 52,
+      "tamanho_bytes": 4015,
+      "modificado_em": "2026-11-05T11:00:49"
     }
   }
 }
