@@ -1,0 +1,159 @@
+name: Monitor da Plataforma
+
+# Verifica de hora em hora se as rotinas da Plataforma continuam publicando.
+# Se algo parar, abre um aviso (issue) neste repositório - o GitHub manda e-mail.
+# Quando tudo volta ao normal, o aviso é fechado sozinho.
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: monitor-plataforma
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 3000
+
+      - name: Verificar atualizações
+        run: |
+          cat > monitor_plataforma.py <<'PY'
+          # -*- coding: utf-8 -*-
+          """
+          Monitor da Plataforma Operacional (roda no GitHub, não no computador).
+
+          Verifica quando cada rotina publicou pela última vez e gera um relatório.
+          Regras:
+            1) Pulso geral: se NENHUMA rotina publicou nas últimas LIMITE_PULSO_H horas,
+               o sistema (ou o computador) está parado.
+            2) Por rotina: se o sistema está vivo, mas uma rotina não publica há mais
+               que o limite dela, ela está travada.
+            3) Equipes em atuação: confere a data dentro de dados_emergencia/equipes_abertas.json.
+          Saída: monitor_status.json + monitor_relatorio.md (usados pelo workflow).
+          """
+          import json, os, re, subprocess, sys
+          from datetime import datetime, timezone, timedelta
+
+          BRT = timezone(timedelta(hours=-3))
+          LIMITE_PULSO_H = 3
+          # prefixo da mensagem de commit -> limite em horas sem publicar
+          ROTINAS = {
+              "Atualiza Tempo de Plataforma": 3,
+              "Atualiza Avisos e Callback": 6,
+              "Atualiza Emergencia - TMA mensal": 8,
+              "Atualiza Emergencia - Incidencia Historica": 8,
+              "Atualiza Reincidencia Horaria": 8,
+              "Atualiza Validacao Pos-Atendimento": 8,
+              "Atualiza Ranking Diario V192 + Operadores": 30,
+          }
+          LIMITE_EQUIPES_H = 6
+          ARQ_EQUIPES = "dados_emergencia/equipes_abertas.json"
+
+
+          def agora():
+              fake = os.getenv("MONITOR_AGORA", "").strip()  # só para teste
+              return datetime.fromisoformat(fake) if fake else datetime.now(timezone.utc)
+
+
+          def ultimos_commits(ate):
+              out = subprocess.run(
+                  ["git", "log", "--format=%ct|%s", f"--until={int(ate.timestamp())}", "-n", "3000"],
+                  capture_output=True, text=True, check=True,
+              ).stdout
+              ultimo = {}
+              pulso = None
+              for linha in out.splitlines():
+                  if "|" not in linha:
+                      continue
+                  ts, msg = linha.split("|", 1)
+                  quando = datetime.fromtimestamp(int(ts), timezone.utc)
+                  if msg.startswith("Atualiza "):
+                      pulso = pulso or quando
+                  for prefixo in ROTINAS:
+                      if msg.startswith(prefixo) and prefixo not in ultimo:
+                          ultimo[prefixo] = quando
+              return pulso, ultimo
+
+
+          def horas(a, b):
+              return (a - b).total_seconds() / 3600
+
+
+          def fmt(dt):
+              return dt.astimezone(BRT).strftime("%d/%m %H:%M") if dt else "nunca"
+
+
+          def main():
+              now = agora()
+              pulso, ultimo = ultimos_commits(now)
+              problemas, linhas = [], []
+
+              sistema_vivo = pulso is not None and horas(now, pulso) <= LIMITE_PULSO_H
+              if not sistema_vivo:
+                  problemas.append(
+                      f"**Sistema parado**: nenhuma atualização desde {fmt(pulso)} "
+                      f"({horas(now, pulso):.0f} h). Verifique se o computador e a Plataforma estão ligados "
+                      f"e se o envio para o GitHub está funcionando."
+                  )
+
+              for prefixo, limite in ROTINAS.items():
+                  quando = ultimo.get(prefixo)
+                  h = horas(now, quando) if quando else 9999
+                  ok = h <= limite
+                  linhas.append(f"| {prefixo.replace('Atualiza ', '')} | {fmt(quando)} | {h:.1f} h | {limite} h | {'✅' if ok else '❌'} |")
+                  if sistema_vivo and not ok:
+                      problemas.append(f"**{prefixo.replace('Atualiza ', '')}** sem publicar desde {fmt(quando)} ({h:.0f} h; limite {limite} h).")
+
+              try:
+                  dados = json.load(open(ARQ_EQUIPES, encoding="utf-8"))
+                  eq_dt = datetime.fromisoformat(dados["atualizado_em"]).replace(tzinfo=BRT)
+              except Exception:
+                  eq_dt = None
+              h_eq = horas(now, eq_dt) if eq_dt else 9999
+              linhas.append(f"| Equipes em atuação | {fmt(eq_dt)} | {h_eq:.1f} h | {LIMITE_EQUIPES_H} h | {'✅' if h_eq <= LIMITE_EQUIPES_H else '❌'} |")
+              if sistema_vivo and h_eq > LIMITE_EQUIPES_H:
+                  problemas.append(f"**Equipes em atuação** parado desde {fmt(eq_dt)} ({h_eq:.0f} h).")
+
+              rel = [f"Verificação: {fmt(now)} (horário de Brasília)", "",
+                     "| Rotina | Última publicação | Há | Limite | Situação |", "|---|---|---|---|---|", *linhas]
+              if problemas:
+                  rel = ["### Problemas encontrados", "", *[f"- {p}" for p in problemas], "", *rel]
+              open("monitor_relatorio.md", "w", encoding="utf-8").write("\n".join(rel) + "\n")
+              json.dump({"ok": not problemas, "problemas": problemas}, open("monitor_status.json", "w", encoding="utf-8"), ensure_ascii=False)
+              print("\n".join(rel))
+              return 0
+
+
+          if __name__ == "__main__":
+              sys.exit(main())
+          PY
+          python3 monitor_plataforma.py
+
+      - name: Abrir, atualizar ou fechar o aviso
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create monitor-plataforma --color D93F0B --description "Aviso automático do monitor" --repo "$REPO" --force >/dev/null
+          OK=$(python3 -c "import json;print(json.load(open('monitor_status.json'))['ok'])")
+          ABERTA=$(gh issue list --repo "$REPO" --label monitor-plataforma --state open --json number --jq '.[0].number')
+          if [ "$OK" = "False" ]; then
+            if [ -z "$ABERTA" ]; then
+              gh issue create --repo "$REPO" --label monitor-plataforma --title "⚠️ Plataforma Operacional sem atualizar" --body-file monitor_relatorio.md
+            fi
+          else
+            if [ -n "$ABERTA" ]; then
+              gh issue comment "$ABERTA" --repo "$REPO" --body "✅ Normalizado. Todas as rotinas voltaram a publicar."
+              gh issue close "$ABERTA" --repo "$REPO"
+            fi
+          fi
