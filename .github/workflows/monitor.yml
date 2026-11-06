@@ -23,7 +23,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          # Só o histórico de commits (sem baixar os arquivos grandes de dados).
           fetch-depth: 3000
+          filter: blob:none
+          sparse-checkout: |
+            dados_emergencia/equipes_abertas.json
+          sparse-checkout-cone-mode: false
 
       - name: Verificar atualizações
         run: |
