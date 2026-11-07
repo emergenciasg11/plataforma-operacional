@@ -7534,7 +7534,7 @@ function renderRealtime(){
   const top5Impact=sum(impactAll.slice(0,5).map(r=>Number(r.clientsCurrent)||0));
   const top5ImpactPct=totalImpact>0?(top5Impact/totalImpact)*100:0;
   if($('rtExecutiveSummary')){
-    const equipesTexto=Number.isFinite(equipesAbertasAtual)?fmtInt(equipesAbertasAtual):'—';
+    const equipesTexto=fmtInt(teams.length);
     $('rtExecutiveSummary').innerHTML=`Na Base de São Gonçalo estamos no momento com <strong>${fmtInt(mtCount)} incidências MT</strong>. Temos <strong>${fmtInt(totalImpact)} clientes afetados</strong>, onde concentramos <strong>${fmt1(top5ImpactPct)}% dos impactos nas 5 maiores ocorrências</strong>. Atuamos no momento com <strong>${equipesTexto} Equipes</strong>. As <strong>${fmtInt(mtCount)} incidências MT representam ${fmt1(mtImpactPct)}% da afetação total</strong>.`;
   }
 
