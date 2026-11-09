@@ -7533,21 +7533,9 @@ function renderRealtime(){
   const mtCount=rows.filter(r=>String(r.ntRaw||'').toUpperCase().includes('MT')).length;
   const top5Impact=sum(impactAll.slice(0,5).map(r=>Number(r.clientsCurrent)||0));
   const top5ImpactPct=totalImpact>0?(top5Impact/totalImpact)*100:0;
-  let resumoEquipesFrase='';
   if($('rtExecutiveSummary')){
-    const OPERACAO_RE=/^SG\d+(SOE|ROE|MOE|LOE)-[ABC]$/;const ehOperacao=t=>OPERACAO_RE.test(String(t||'').trim().toUpperCase());const plantaoInicio=new Date(now);{const h=now.getHours();if(h>=23)plantaoInicio.setHours(23,0,0,0);else if(h<7){plantaoInicio.setDate(plantaoInicio.getDate()-1);plantaoInicio.setHours(23,0,0,0);}else if(h<15)plantaoInicio.setHours(7,0,0,0);else plantaoInicio.setHours(15,0,0,0);}const equipesPlantao=new Set(teams.filter(ehOperacao).map(t=>String(t).trim().toUpperCase()));for(const r of (state.incidents||[])){if(r.final&&r.service==='WITH'&&ehOperacao(r.team)&&r.endDate instanceof Date&&r.endDate>=plantaoInicio&&r.endDate<=now&&!isProgrammed(r))equipesPlantao.add(String(r.team).trim().toUpperCase());}const eqDt=equipesAbertasAtualizadoEm?new Date(equipesAbertasAtualizadoEm):null;const eqOk=Number.isFinite(equipesAbertasAtual)&&eqDt&&!isNaN(eqDt.getTime())&&(now-eqDt)<=2*3600*1000;const equipesFrase=`Atuamos no momento com <strong>${fmtInt(eqOk?equipesAbertasAtual:equipesPlantao.size)} Equipes</strong>.`;
-    resumoEquipesFrase=equipesFrase;
-  }
-  // Resumo executivo (só MT): acompanha o Top selecionado em "Exibir" (Top 5/10/20/30/Todas).
-  const mtImpactRows=impactAll.filter(r=>String(r.ntRaw||'').toUpperCase().includes('MT'));
-  function renderResumoExecutivo(){
-    if(!$('rtExecutiveSummary'))return;
-    const lim=$('rtImpactLimit')?.value||'5';
-    const n=lim==='ALL'?mtImpactRows.length:Math.max(1,Number(lim)||5);
-    const topImpact=sum(mtImpactRows.slice(0,n).map(r=>Number(r.clientsCurrent)||0));
-    const topPct=mtImpact>0?(topImpact/mtImpact)*100:0;
-    const topTexto=lim==='ALL'?`em todas as ${fmtInt(mtImpactRows.length)} ocorrências MT`:`nas ${fmtInt(Math.min(n,mtImpactRows.length))} maiores ocorrências MT`;
-    $('rtExecutiveSummary').innerHTML=`Na Base de São Gonçalo estamos no momento com <strong>${fmtInt(mtCount)} incidências MT</strong>. Temos <strong>${fmtInt(mtImpact)} clientes afetados em MT</strong>, onde concentramos <strong>${fmt1(topPct)}% dos impactos ${topTexto}</strong>. ${resumoEquipesFrase} As <strong>${fmtInt(mtCount)} incidências MT representam ${fmt1(mtImpactPct)}% da afetação total</strong>.`;
+    const equipesTexto=Number.isFinite(equipesAbertasAtual)?fmtInt(equipesAbertasAtual):'—';
+    $('rtExecutiveSummary').innerHTML=`Na Base de São Gonçalo estamos no momento com <strong>${fmtInt(mtCount)} incidências MT</strong>. Temos <strong>${fmtInt(totalImpact)} clientes afetados</strong>, onde concentramos <strong>${fmt1(top5ImpactPct)}% dos impactos nas 5 maiores ocorrências</strong>. Atuamos no momento com <strong>${equipesTexto} Equipes</strong>. As <strong>${fmtInt(mtCount)} incidências MT representam ${fmt1(mtImpactPct)}% da afetação total</strong>.`;
   }
 
   function realtimeImpactIsMtOnly(r){
@@ -7597,7 +7585,6 @@ function renderRealtime(){
     if($('rtImpactShareValue'))$('rtImpactShareValue').textContent=`${fmt1(selectedImpactPct)}%`;
     if($('rtImpactSelectedLabel'))$('rtImpactSelectedLabel').textContent=`Afetação total do ${selectedLabel}`;
     if($('rtImpactSelectedValue'))$('rtImpactSelectedValue').textContent=fmtInt(selectedImpact);
-    renderResumoExecutivo();
   }
 
   renderImpactRanking();
