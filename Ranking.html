@@ -2608,10 +2608,10 @@ const DASHBOARD_VERSAO = "V83_TEXTOS_MENSAL_POR_TURNO";
 // Alteração V30: somente o HTML OFICIAL usa este bloco.
 // O HTML CORRIGIDO permanece com as fórmulas atuais da V22.
 const SC_OFICIAL={
-  efic:v=>v==null?0:v<=80?0:v>=115?11.7:v*0.5-40,
+  efic:v=>v==null?0:v<=80?0:v>=115?11.7:Math.min(11.7,v*0.5-40),
   util:v=>v==null?0:v<=60?0:v>=88?11.2:v*0.4-24,
-  ativ:v=>v==null?0:v<=1?0:v>=5.5?16.5:v*4.412-4.413,
-  tt:v=>v==null?0:v<=40?0:v>=65?23.33:v*1.5-60,
+  ativ:v=>v==null?0:v<=1?0:v>=5.5?16.5:Math.min(16.5,v*4.412-4.413),
+  tt:v=>v==null?0:v<=40?0:v>=65?23.33:Math.min(23.33,v*1.5-60),
   ts:v=>v==null?0:v>=72?0:v<=45?18.41:v*(-0.682)+49.1,
   ti:v=>v==null?0:v>=28?0:v<=17?13.75:v*(-1.25)+35,
   login:v=>v==null?0:v>=12?0:v<=7?13.6:v*(-2.72)+32.64,
