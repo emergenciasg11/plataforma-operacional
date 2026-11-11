@@ -7547,7 +7547,10 @@ function renderRealtime(){
     const topImpact=sum(mtImpactRows.slice(0,n).map(r=>Number(r.clientsCurrent)||0));
     const topPct=mtImpact>0?(topImpact/mtImpact)*100:0;
     const topTexto=lim==='ALL'?`em todas as ${fmtInt(mtImpactRows.length)} ocorrências MT`:`nas ${fmtInt(Math.min(n,mtImpactRows.length))} maiores ocorrências MT`;
-    $('rtExecutiveSummary').innerHTML=`Na Base de São Gonçalo estamos no momento com <strong>${fmtInt(mtCount)} incidências MT</strong>. Temos <strong>${fmtInt(mtImpact)} clientes afetados em MT</strong>, onde concentramos <strong>${fmt1(topPct)}% dos impactos ${topTexto}</strong>. ${resumoEquipesFrase} As <strong>${fmtInt(mtCount)} incidências MT representam ${fmt1(mtImpactPct)}% da afetação total</strong>.`;
+    const btResumoRows=rows.filter(r=>r.tension==='BT');
+    const btResumoCount=btResumoRows.length;
+    const btResumoImpact=sum(btResumoRows.map(r=>Number(r.clientsCurrent)||0));
+    $('rtExecutiveSummary').innerHTML=`Na Base de São Gonçalo estamos no momento com <strong>${fmtInt(rows.length)} incidências ativas</strong> (<strong>${fmtInt(btResumoCount)} BT</strong> e <strong>${fmtInt(mtCount)} MT</strong>). Temos <strong>${fmtInt(totalImpact)} clientes afetados</strong>, sendo <strong>${fmtInt(btResumoImpact)} em BT</strong> e <strong>${fmtInt(mtImpact)} em MT</strong>. No MT, concentramos <strong>${fmt1(topPct)}% dos impactos ${topTexto}</strong>. ${resumoEquipesFrase} As <strong>${fmtInt(mtCount)} incidências MT representam ${fmt1(mtImpactPct)}% da afetação total</strong>.`;
   }
 
   function realtimeImpactIsMtOnly(r){
