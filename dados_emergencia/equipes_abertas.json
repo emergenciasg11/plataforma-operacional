@@ -1,6 +1,6 @@
 {
-  "total_equipes_abertas": 13,
-  "atualizado_em": "2026-11-17T11:34:02",
+  "total_equipes_abertas": 12,
+  "atualizado_em": "2026-11-17T13:43:19",
   "fonte": "OperView - Grid_Jornadas_Equipes.xlsx",
   "polo": "SÃO GONÇALO",
   "regra": "Sucursal SAO GONCALO + Setor OPERACAO + sem Fim (jornada aberta)"
