@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-11-24T18:47:51",
+  "gerado_em": "2026-11-24T19:31:55",
   "versao": 12,
   "arquivos": {
     "callback": {
@@ -19,9 +19,9 @@
     "reincidencia_principal": {
       "arquivo": "reincidencia_principal.json.gz",
       "linhas": 275843,
-      "tamanho_bytes": 28303379,
+      "tamanho_bytes": 28303431,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\download geonline\\downloads\\Bases_Finais\\Base_Final_Incidencia.parquet",
-      "fonte_modificada_em": "2026-11-24T18:33:54",
+      "fonte_modificada_em": "2026-11-24T19:37:24",
       "linhas_origem": 275843,
       "linhas_publicadas": 275843,
       "clientes_oficiais": 3734,
@@ -30,18 +30,18 @@
     },
     "reincidencia_oficial": {
       "arquivo": "reincidencia_oficial.json.gz",
-      "linhas": 5297,
-      "tamanho_bytes": 597036,
+      "linhas": 5299,
+      "tamanho_bytes": 597463,
       "fonte": "C:\\emergencia\\Plataforma_Operacional\\runtime\\BUSCA EXECUÇÃO\\plataforma_dados\\Base_Reincidencia_Plataforma.xlsx",
-      "fonte_modificada_em": "2026-11-24T18:34:55",
-      "vinculadas_principal": 5297,
+      "fonte_modificada_em": "2026-11-24T19:31:42",
+      "vinculadas_principal": 5299,
       "sem_vinculo_principal": 0,
       "modo": "oficial_enriquecida"
     },
     "analise_grupo_causa": {
       "arquivo": "analise_grupo_causa.json.gz",
       "linhas": 28555,
-      "tamanho_bytes": 2288925,
+      "tamanho_bytes": 2288921,
       "metodologia": "grupo_causa_contextual_v4_consulta_incidencia_mestre",
       "fonte_mestre": "Base_Final_Incidencia / Consulta Incidência",
       "janela_reincidencia_dias": 30,
@@ -54,8 +54,8 @@
       "linhas_nova": 9814,
       "clientes_antiga": 13848,
       "clientes_nova": 5366,
-      "referencia_base_reincidencia_oficial": 5297,
-      "diferenca_antiga_vs_oficial": 23258,
+      "referencia_base_reincidencia_oficial": 5299,
+      "diferenca_antiga_vs_oficial": 23256,
       "ambiguas_sem_contexto": 110,
       "execucao_arquivos": [
         "base_fevereiro_20260630_182351.xlsx::Execução",
